@@ -55,11 +55,11 @@ php artisan serve
 
 ## Help
 
-* If you have encountered **error in running `npm run start`**, node dependencies must be installed first. 
+* If you have encountered **error in running** `npm run start`, node dependencies must be installed first. 
 ```
 npm install
 ```
-* If you have encountered **error in running `php artisan serve`**, composer must be installed first. 
+* If you have encountered **error in running** `php artisan serve`, composer must be installed first. 
 ```
 composer install
 ```
