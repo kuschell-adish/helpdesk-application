@@ -21,7 +21,7 @@ git remote add origin https://github.com/kuschell-adish/helpdesk-application
 
 ### Front-End
 
-* Switch the branch into feature/creating_initial_pages to see the front-end of application. 
+* To see the frontend syntaxes, switch to a different branch. 
 ```
 checkout feature/creating_initial_pages
 ```
@@ -29,10 +29,8 @@ checkout feature/creating_initial_pages
 ```
 npm install
 ```
-* Save this source code locally to your device. 
-```
-helpdesk-frontend
-```
+* Save this source code locally to your device and have it named (ex. helpdesk-frontend).
+
 * Run the front-end of application. 
 ```
 npm run start
@@ -48,10 +46,8 @@ checkout feature/creating_initial_functions
 ```
 composer install
 ```
-* Save this source code locally to your device. 
-```
-helpdesk-backend
-```
+* Save this source code locally to your device and have it named (ex. helpdesk-backend).
+
 * Run the back-end of application. 
 ```
 php artisan serve
@@ -59,15 +55,12 @@ php artisan serve
 
 ## Help
 
-If you have encountered error in running npm run start, node dependencies must be installed first. 
+* If you have encountered **error in running `npm run start`**, node dependencies must be installed first. 
 ```
 npm install
 ```
-If you have encountered error in running php artisan serve, composer must be installed first. 
+* If you have encountered **error in running `php artisan serve`**, composer must be installed first. 
 ```
 composer install
 ```
-If you have encountered 500 server error, .env file must be created, a .env example has been provided in this source code. 
-```
-.env 
-```
+* If you have encountered **500 server error**, .env file must be created, a .env example has been provided in this source code. 
