@@ -8,6 +8,9 @@ import Sidebar from '../components/Sidebar';
 import TicketCounts from '../components/TicketCounts';
 import TicketStatus from '../components/TicketStatus';
 
+import { getUrl } from '../utils/apiUtils'; 
+import { useUser } from '../context/UserContext'; 
+
 function Dashboard() {
     const [newTicketCount, setNewTicketCount] = useState(0);
     const [progressTicketCount, setProgressTicketCount] = useState(0);
@@ -20,76 +23,105 @@ function Dashboard() {
 
     const [departmentData, setDepartmentData] = useState([]);
 
-    const url = "http://127.0.0.1:8000/api/tickets";
+    const url = getUrl('tickets');   
+    const { user } = useUser(); 
 
     useEffect(() => {
         document.title = 'adish HAP | Dashboard';
+        
         const fetchTickets = async() => {
         try {
             const response = await axios.get(url);
             const ticketsData = response.data.tickets;
             const departmentsData = response.data.departments;
 
-            const newTickets = ticketsData.filter(ticket => ticket.status_id === 1); 
-            setNewTicketCount(newTickets.length); 
+            if (user) {
+              const newTickets = ticketsData.filter(ticket => ticket.status_id === 1 && ticket.user_id === user.id); 
+              setNewTicketCount(newTickets.length); 
 
-            const progressTickets = ticketsData.filter(ticket => ticket.status_id === 2);
-            setProgressTicketCount(progressTickets.length);
+              const progressTickets = ticketsData.filter(ticket => ticket.status_id === 2 && ticket.user_id === user.id);
+              setProgressTicketCount(progressTickets.length);
 
-            const resolvedTickets = ticketsData.filter(ticket => ticket.status_id === 3);
-            setResolvedTicketCount(resolvedTickets.length);
+              const resolvedTickets = ticketsData.filter(ticket => ticket.status_id === 3 && ticket.user_id === user.id);
+              setResolvedTicketCount(resolvedTickets.length);
 
-            const closedTickets = ticketsData.filter(ticket => ticket.status_id === 4);
-            setClosedTicketCount(closedTickets.length); 
+              const closedTickets = ticketsData.filter(ticket => ticket.status_id === 4 && ticket.user_id === user.id);
+              setClosedTicketCount(closedTickets.length); 
 
-            const lowTickets = ticketsData.filter(ticket => ticket.priority_id === 1);
-            setLowTicketCount(lowTickets.length);
+              const lowTickets = ticketsData.filter(ticket => ticket.priority_id === 1 && ticket.user_id === user.id);
+              setLowTicketCount(lowTickets.length);
 
-            const mediumTickets = ticketsData.filter(ticket => ticket.priority_id === 2);
-            setMediumTicketCount(mediumTickets.length);
+              const mediumTickets = ticketsData.filter(ticket => ticket.priority_id === 2 && ticket.user_id === user.id);
+              setMediumTicketCount(mediumTickets.length);
 
-            const highTickets = ticketsData.filter(ticket => ticket.priority_id === 3); 
-            setHighTicketCount(highTickets.length); 
+              const highTickets = ticketsData.filter(ticket => ticket.priority_id === 3 && ticket.user_id === user.id); 
+              setHighTicketCount(highTickets.length); 
 
-            const colorPattern = ['#E88504', '#9CA3AF'];
-            const filteredData = departmentsData.map((department, index) => {
-                const departmentTickets = ticketsData.filter(ticket => ticket.department_id === department.id);
+              const colorPattern = ['#E88504', '#9CA3AF'];
+              const filteredData = departmentsData.map((department, index) => {
+              const departmentTickets = ticketsData.filter(ticket => ticket.department_id === department.id);
       
-                const quarterOne = departmentTickets.filter(ticket => {
-                  const month = new Date(ticket.created_at).getMonth() + 1;
+              const quarterOne = departmentTickets.filter(ticket => {
+                const month = new Date(ticket.created_at).getMonth() + 1;
                   return month >= 1 && month <= 3;
-                }).length;
+              }).length;
       
-                const quarterTwo = departmentTickets.filter(ticket => {
+              const quarterTwo = departmentTickets.filter(ticket => {
                   const month = new Date(ticket.created_at).getMonth() + 1;
                   return month >= 4 && month <= 6;
-                }).length;
+              }).length;
       
-                const quarterThree = departmentTickets.filter(ticket => {
+              const quarterThree = departmentTickets.filter(ticket => {
                   const month = new Date(ticket.created_at).getMonth() + 1;
                   return month >= 7 && month <= 9;
-                }).length;
+              }).length;
       
-                const quarterFour = departmentTickets.filter(ticket => {
+              const quarterFour = departmentTickets.filter(ticket => {
                   const month = new Date(ticket.created_at).getMonth() + 1;
                   return month >= 10 && month <= 12;
-                }).length;
-      
+              }).length;
+
+              const userTickets = ticketsData.filter(ticket => ticket.user_id === user?.id);
+
+              // const userQuarterOne = userTickets.filter(ticket => {
+              //   const month = new Date(ticket.created_at).getMonth() + 1;
+              //     return month >= 1 && month <= 3;
+              // }).length;
+
+              // const userQuarterTwo = userTickets.filter(ticket => {
+              //   const month = new Date(ticket.created_at).getMonth() + 1;
+              //   return month >= 4 && month <= 6;
+              // }).length;
+
+              // const userQuarterThree = userTickets.filter(ticket => {
+              //   const month = new Date(ticket.created_at).getMonth() + 1;
+              //   return month >= 7 && month <= 9;
+              // }).length;
+              // console.log("userthree", userQuarterThree); 
+
+              // const userQuarterFour = userTickets.filter(ticket => {
+              //   const month = new Date(ticket.created_at).getMonth() + 1;
+              //   return month >= 10 && month <= 12;
+              // }).length;
+
                 return {
                   name: department.name + " Tickets",
-                  data: [quarterOne, quarterTwo, quarterThree, quarterFour],
+                  data: [quarterOne,quarterTwo,quarterThree, quarterFour],
                   color: colorPattern[index % colorPattern.length],
                 };
               });
       
               setDepartmentData(filteredData);
+            }
         }
         catch (error) {
             console.error("Error fetching data", error); 
         }
         };
-        fetchTickets(); 
-    }, [url]);
+       if (user) {
+        fetchTickets();
+       }
+    }, [user, url]);
 
     const statusData = [newTicketCount, progressTicketCount, resolvedTicketCount, closedTicketCount];
     const priorityData = [lowTicketCount, mediumTicketCount, highTicketCount]; 

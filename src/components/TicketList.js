@@ -3,10 +3,15 @@ import { useEffect, useState } from 'react';
 import axios from 'axios'; 
 import { format } from 'date-fns';
 
+import { getUrl } from '../utils/apiUtils'; 
+import { useUser } from '../context/UserContext'; 
+
 function TicketList({filtersValue, searchValue}) {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState ([]); 
-  const url = "http://127.0.0.1:8000/api/tickets";
+
+  const url = getUrl('tickets');   
+  const { user } = useUser(); 
 
   const statusClasses = (category) => {
     switch(category) {
@@ -41,7 +46,8 @@ function TicketList({filtersValue, searchValue}) {
       try {
         const response = await axios.get(url);
         const ticketsData = response.data.tickets;
-        setTickets(ticketsData);
+        const userTickets = ticketsData.filter(ticket => ticket.user_id === user?.id); 
+        setTickets(userTickets);
       }
       catch (error) {
         console.error("Error fetching data", error); 

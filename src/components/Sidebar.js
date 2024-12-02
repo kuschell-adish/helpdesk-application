@@ -2,13 +2,17 @@ import React from 'react';
 import NavItem from './NavItem';
 
 function Sidebar() {
+    const handleLogout = () => {
+        localStorage.removeItem('user'); 
+    }
+    
   return (
     <div>
       <div className="fixed w-1/12 h-screen p-3 px-8 hidden md:block">
         <div className="flex flex-col justify-around gap-10">
             <div className="flex flex-col gap-y-2.5 items-center">
                 <NavItem 
-                    link = "/"
+                    link = "/dashboard"
                     icon = "M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 0 1-1.125-1.125v-3.75ZM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-8.25ZM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 0 1-1.125-1.125v-2.25Z"
                     label= "Dashboard"
                 />
@@ -32,14 +36,12 @@ function Sidebar() {
                     icon = "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                     label= "My Profile"
                 />
-                <a href="#" className="flex flex-row gap-x-3 items-center py-3 hover:border-b-2 border-orange-500">
-                    <div className="flex flex-col items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 text-orange-500">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
-                        </svg>  
-                        <p className="font-medium text-xs">Logout</p>
-                    </div>
-                </a>
+                <NavItem 
+                    link = "/"
+                    icon = "M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
+                    label= "Logout"
+                    onClick={handleLogout}
+                />
             </div>
         </div>
     </div>

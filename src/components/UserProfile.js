@@ -1,7 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
+
 import Input from './Input';
 import Button from './Button';
+
+import { useUser } from '../context/UserContext'; 
 
 function UserProfile() {
   const [hasFileError,setHasFileError] = useState(false); 
@@ -30,7 +33,8 @@ function UserProfile() {
     }
   }
 
-  console.log("profile", profilePicture); 
+  const { user } = useUser(); 
+
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
@@ -47,53 +51,55 @@ function UserProfile() {
           label="First Name"
           type="text"
           name="first_name"
-          value="Juan"
+          value={user?.first_name || ''}
           isDisabled={true}
         />
         <Input
           label="Email"
           type="text"
           name="email"
-          value="juandelacruz@email.com"
+          value={user?.email || ''}
           isDisabled={true}
         />
         <Input
           label="Middle Name"
           type="text"
           name="middle_name"
-          value="Guzman"
+          value={user?.middle_name || ''}
           isDisabled={true}
         />
         <Input
           label="Company"
           type="text"
           name="company"
-          value="XYZ International"
+          value={user?.company?.name|| ''}
           isDisabled={true}
         />
         <Input
           label="Last Name"
           type="text"
           name="last_name"
-          value="Dela Cruz"
+          value={user?.last_name || ''}
           isDisabled={true}
         />
         <Input
           label="Position"
           type="text"
           name="position"
-          value="Operations Manager"
+          value={user?.position || ''}
           isDisabled={true}
         />
         </div>
-        <div className=" flex justify-end mr-2">
-          <Button 
-            type="submit"
-            label="Update"
-            isPrimary={true}
-            onClick={handleUpdateClick}
-            isDisabled={isButtonDisabled()}
-            />
+        <div className="w-full flex justify-end">
+          <div className="w-1/12 flex justify-end mr-2">
+            <Button 
+              type="submit"
+              label="Update"
+              isPrimary={true}
+              onClick={handleUpdateClick}
+              isDisabled={isButtonDisabled()}
+              />
+          </div>
         </div>
     </div>
   )

@@ -10,13 +10,15 @@ import Input from '../components/Input';
 import axios from 'axios';
 import Button from '../components/Button';
 
+import { getUrl } from '../utils/apiUtils';
+import { useUser } from '../context/UserContext'; 
+
 function FileTicket() {
   const [departments, setDepartments] = useState([]); 
   const [priorities, setPriorities] = useState([]); 
   const [employees, setEmployees] = useState([]); 
   const [filteredEmployees, setFilteredEmployees] = useState([]); 
 
-  const authUser = 14;
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedPriority, setSelectedPriority] = useState("");
@@ -25,9 +27,11 @@ function FileTicket() {
   const [isChecked, setIsChecked] = useState(false); 
   const [filesInput, setFilesInput] = useState([]);
 
-  const url = "http://127.0.0.1:8000/api/tickets/create";
-  const postUrl = "http://127.0.0.1:8000/api/tickets";
+  const url = getUrl('tickets/create');   
+  const postUrl = getUrl('tickets');  
   const quillRef = useRef(null);
+  const { user } = useUser(); 
+  const userName = user ? `${user.first_name} ${user.last_name}` : ''; 
 
   const handleTitleChange = (value) => {
     setTitleInput(value); 
@@ -121,7 +125,7 @@ function FileTicket() {
     try {
       const formData = new FormData();
 
-      formData.append('authUser', authUser);
+      formData.append('authUser', user?.id);
       formData.append('selectedDepartment', selectedDepartment);
       formData.append('selectedEmployee', selectedEmployee);
       formData.append('selectedPriority', selectedPriority);
@@ -208,7 +212,7 @@ function FileTicket() {
                 label="Name"
                 type="text"
                 name="name"
-                value={authUser}
+                value={userName}
                 isDisabled={true}
                 />
                 <Input
@@ -300,20 +304,22 @@ function FileTicket() {
                   {hasFileError && <p className="text-xs text-red-500">{fileErrorMessage}</p>}
                 </div> 
               </div>
-              <div className="flex flex row gap-x-2 justify-end mr-2">
-                <Button 
-                type="button"
-                label="Cancel"
-                isPrimary={false}
-                onClick={handleCancelClick}
-                />
-                <Button 
-                type="submit"
-                label="Submit"
-                isPrimary={true}
-                onClick={handleSubmitClick}
-                isDisabled={isButtonDisabled()}
-                />
+              <div className="w-full flex justify-end">
+                <div className="w-1/6 flex flex-row gap-x-2 mr-2">
+                  <Button 
+                  type="button"
+                  label="Cancel"
+                  isPrimary={false}
+                  onClick={handleCancelClick}
+                  />
+                  <Button 
+                  type="submit"
+                  label="Submit"
+                  isPrimary={true}
+                  onClick={handleSubmitClick}
+                  isDisabled={isButtonDisabled()}
+                  />
+                </div>
               </div>
             </div>
         </div>

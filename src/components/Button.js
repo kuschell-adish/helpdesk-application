@@ -7,7 +7,7 @@ function Button({type,label,isPrimary, onClick, isDisabled}) {
         type={type} 
         onClick={onClick}
         disabled= {isDisabled}
-        className={`w-24 p-2 mt-5 rounded-sm text-sm font-semibold ${isDisabled && 'opacity-80 cursor-not-allowed'} ${isPrimary ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'border border-orange-500 hover:bg-orange-500 hover:text-white' }`}>
+        className={`w-full p-2 mt-5 rounded-sm text-sm font-semibold ${isDisabled && 'opacity-60 cursor-not-allowed'} ${isPrimary ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'border border-orange-500 hover:bg-orange-500 hover:text-white' }`}>
         {label}
     </button>
   )
