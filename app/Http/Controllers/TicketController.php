@@ -50,7 +50,7 @@ class TicketController extends Controller
         $validated = $request->validate([
             'authUser' => 'required|integer|exists:users,id',
             'selectedDepartment' => 'required|integer|exists:departments,id',
-            'selectedEmployee' => 'required|integer|exists:users,id',
+            'selectedEmployee' => '', //for unassigned option
             'selectedPriority' => 'required|integer|exists:priorities,id',
             'titleInput' => 'required|string|min:10',
             'descriptionInput' => 'required|string|min:10',
