@@ -5,8 +5,12 @@ import TicketList from '../components/TicketList'
 import Searchbar from '../components/Searchbar';
 import Filter from '../components/Filter';
 
+import axios from 'axios'; 
+import { getUrl } from '../utils/apiUtils'; 
+
 function AllTickets() {
   const [searchValue, setSearchValue] = useState("");
+  const [newTickets, setNewTickets] = useState([]); 
   const handleSearchChange = (value) => {
     setSearchValue(value); 
   }; 
@@ -28,8 +32,21 @@ function AllTickets() {
     setFiltersValue(newFilters);
   };
 
+  const url = getUrl('tickets');   
+
   useEffect(() => {
     document.title = "adish HAP | My Tickets"
+
+    const fetchTickets = async () => {
+      try {
+        const response = await axios.get(url); 
+        setNewTickets(response.data.tickets || []); 
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      } 
+    };
+    
+    fetchTickets(); 
   },[]); 
 
 
@@ -49,7 +66,11 @@ function AllTickets() {
               onChange={handleSearchChange}
               />
                <Filter onFilterChange={handleFilterChange} />
-              <TicketList filtersValue={filtersValue} searchValue={searchValue} />
+              <TicketList 
+                propTickets={newTickets}
+                filtersValue={filtersValue} 
+                searchValue={searchValue} 
+              />
             </div>
         </div>
     </div>

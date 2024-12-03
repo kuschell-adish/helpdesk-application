@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 
 import { UserProvider } from './context/UserContext';
 
+import Test from './pages/Test';
 function App() {
   return (
     <UserProvider>
@@ -20,6 +21,7 @@ function App() {
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/articles" element={<Articles />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/test" element={<Test />} />
         </Routes>
       </Router>
     </UserProvider>

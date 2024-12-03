@@ -40,7 +40,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
               </option>
             ))}
           </select>
-          {hasError &&  <p className="mt-2 text-xs text-red-500">{error}</p>}
+          {hasError &&  <p className="text-xs text-red-500">{error}</p>}
         </div>
       ): type === 'password' ? (
         <div className="relative mb-3">
@@ -64,7 +64,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
               className="absolute top-1/3 mt-2.5 right-2 transform -translate-y-1/2 cursor-pointer"
             />
           )}
-          {hasError &&  <p className="mt-2 text-xs text-red-500">{error}</p>}
+          {hasError &&  <p className="absolute mt-1 text-xs text-red-500">{error}</p>}
         </div>
       ) : 
       ( 
@@ -79,7 +79,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
           options = {options}
           className={`mt-2 w-full p-2 text-sm rounded-sm ${isDisabled ? 'bg-gray-200 cursor-not-allowed' : 'border-[1px] border-black' }`}>
         </input>
-        {hasError &&  <p className="mt-2 text-xs text-red-500">{error}</p>}
+        {hasError &&  <p className="text-xs text-red-500">{error}</p>}
       </div>
       )}
     </div>

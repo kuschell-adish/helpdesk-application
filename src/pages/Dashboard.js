@@ -33,8 +33,7 @@ function Dashboard() {
         try {
             const response = await axios.get(url);
             const ticketsData = response.data.tickets;
-            const departmentsData = response.data.departments;
-
+           
             if (user) {
               const newTickets = ticketsData.filter(ticket => ticket.status_id === 1 && ticket.user_id === user.id); 
               setNewTicketCount(newTickets.length); 
@@ -58,59 +57,38 @@ function Dashboard() {
               setHighTicketCount(highTickets.length); 
 
               const colorPattern = ['#E88504', '#9CA3AF'];
-              const filteredData = departmentsData.map((department, index) => {
-              const departmentTickets = ticketsData.filter(ticket => ticket.department_id === department.id);
-      
-              const quarterOne = departmentTickets.filter(ticket => {
-                const month = new Date(ticket.created_at).getMonth() + 1;
-                  return month >= 1 && month <= 3;
-              }).length;
-      
-              const quarterTwo = departmentTickets.filter(ticket => {
-                  const month = new Date(ticket.created_at).getMonth() + 1;
-                  return month >= 4 && month <= 6;
-              }).length;
-      
-              const quarterThree = departmentTickets.filter(ticket => {
-                  const month = new Date(ticket.created_at).getMonth() + 1;
-                  return month >= 7 && month <= 9;
-              }).length;
-      
-              const quarterFour = departmentTickets.filter(ticket => {
-                  const month = new Date(ticket.created_at).getMonth() + 1;
-                  return month >= 10 && month <= 12;
-              }).length;
-
               const userTickets = ticketsData.filter(ticket => ticket.user_id === user?.id);
 
-              // const userQuarterOne = userTickets.filter(ticket => {
-              //   const month = new Date(ticket.created_at).getMonth() + 1;
-              //     return month >= 1 && month <= 3;
-              // }).length;
+              const getQuarterCount = (tickets, quarterStartMonth, quarterEndMonth) => {
+                return tickets.filter(ticket => {
+                  const month = new Date(ticket.created_at).getMonth() + 1;
+                  return month >= quarterStartMonth && month <= quarterEndMonth;
+                }).length;
+              };
 
-              // const userQuarterTwo = userTickets.filter(ticket => {
-              //   const month = new Date(ticket.created_at).getMonth() + 1;
-              //   return month >= 4 && month <= 6;
-              // }).length;
+              const totalQuarterOne = getQuarterCount(ticketsData, 1, 3); 
+              const totalQuarterTwo = getQuarterCount(ticketsData, 4, 6); 
+              const totalQuarterThree = getQuarterCount(ticketsData, 7, 9); 
+              const totalQuarterFour = getQuarterCount(ticketsData, 10, 12);
 
-              // const userQuarterThree = userTickets.filter(ticket => {
-              //   const month = new Date(ticket.created_at).getMonth() + 1;
-              //   return month >= 7 && month <= 9;
-              // }).length;
-              // console.log("userthree", userQuarterThree); 
+              const userQuarterOne = getQuarterCount(userTickets, 1, 3);
+              const userQuarterTwo = getQuarterCount(userTickets, 4, 6);
+              const userQuarterThree = getQuarterCount(userTickets, 7, 9);
+              const userQuarterFour = getQuarterCount(userTickets, 10, 12);
 
-              // const userQuarterFour = userTickets.filter(ticket => {
-              //   const month = new Date(ticket.created_at).getMonth() + 1;
-              //   return month >= 10 && month <= 12;
-              // }).length;
+              const filteredData = [
+                {
+                  name: "All Tickets",
+                  data: [totalQuarterOne, totalQuarterTwo, totalQuarterThree, totalQuarterFour],
+                  color: colorPattern[0], 
+                },
+                {
+                  name: "My Tickets",
+                  data: [userQuarterOne, userQuarterTwo, userQuarterThree, userQuarterFour],
+                  color: colorPattern[1], 
+                }
+              ];
 
-                return {
-                  name: department.name + " Tickets",
-                  data: [quarterOne,quarterTwo,quarterThree, quarterFour],
-                  color: colorPattern[index % colorPattern.length],
-                };
-              });
-      
               setDepartmentData(filteredData);
             }
         }
@@ -125,8 +103,6 @@ function Dashboard() {
 
     const statusData = [newTicketCount, progressTicketCount, resolvedTicketCount, closedTicketCount];
     const priorityData = [lowTicketCount, mediumTicketCount, highTicketCount]; 
-
-    console.log(departmentData);
 
   return (
     <div className="bg-gray-50">

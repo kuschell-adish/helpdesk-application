@@ -6,7 +6,7 @@ function TicketStatus({seriesData}) {
     const chartOptions = getRadialChartOptions(seriesData);
 
     const StatusBox = ({ color, count, label, width }) => (
-        <div className={`w-${width} h-24 ${color} bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center`}>
+        <div className={`${width === 'full' ? 'w-full' : 'w-24'} h-24 ${color} bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center `}>
             <p className="text-white text-4xl">{count}</p>
             <p>{label}</p>
         </div>
@@ -16,10 +16,10 @@ function TicketStatus({seriesData}) {
 
     const ticketsStatuses = [
         { color: 'bg-orange-500', count: allTicketCount, label: 'All Tickets', width: 'full' },
-        { color: 'bg-yellow-500', count: seriesData[0], label: 'New', width: '24' },
-        { color: 'bg-blue-500', count: seriesData[1], label: 'In Progress', width: '24' },
-        { color: 'bg-green-500', count: seriesData[2], label: 'Resolved', width: '24' },
-        { color: 'bg-red-500', count: seriesData[3], label: 'Closed', width: '24' }
+        { color: 'bg-yellow-500', count: seriesData[0], label: 'New' },
+        { color: 'bg-blue-500', count: seriesData[1], label: 'In Progress' },
+        { color: 'bg-green-500', count: seriesData[2], label: 'Resolved' },
+        { color: 'bg-red-500', count: seriesData[3], label: 'Closed' }
     ];
 
     const [firstRow, secondRow, thirdRow] = [
@@ -105,7 +105,7 @@ function TicketStatus({seriesData}) {
     }; 
 
     return (
-        <div className="w-full h-[838px] bg-white p-5 rounded-lg shadow mb-5">
+        <div className="w-full h-[838px] bg-white p-4 rounded-lg shadow mb-5">
             <div className="flex flex-row justify-between">
                 <div className="flex flex-row items-center">
                     <p className="text-sm font-semibold">Tickets Statuses</p>

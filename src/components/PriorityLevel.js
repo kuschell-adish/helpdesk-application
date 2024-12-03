@@ -106,7 +106,7 @@ function PriorityLevel({seriesData}) {
     })
 }; 
   return (
-      <div className="w-full bg-white p-5 rounded-lg shadow">
+      <div className="w-full bg-white p-4 rounded-lg shadow">
             <div className="flex flex-row justify-between">
                 <div className="flex flex-row items-center">
                     <p className="text-sm font-semibold">Priority Level</p>

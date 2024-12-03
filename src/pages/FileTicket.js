@@ -3,6 +3,9 @@ import { useRef, useEffect } from 'react';
 import { format } from 'date-fns';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
@@ -11,9 +14,10 @@ import axios from 'axios';
 import Button from '../components/Button';
 
 import { getUrl } from '../utils/apiUtils';
-import { useUser } from '../context/UserContext'; 
+import { useUser } from '../context/UserContext';
 
 function FileTicket() {
+
   const [departments, setDepartments] = useState([]); 
   const [priorities, setPriorities] = useState([]); 
   const [employees, setEmployees] = useState([]); 
@@ -32,6 +36,7 @@ function FileTicket() {
   const quillRef = useRef(null);
   const { user } = useUser(); 
   const userName = user ? `${user.first_name} ${user.last_name}` : ''; 
+  const navigate = useNavigate(); 
 
   const handleTitleChange = (value) => {
     setTitleInput(value); 
@@ -54,10 +59,18 @@ function FileTicket() {
   };
 
   const handleCheckboxChange = () => {
-    setIsChecked(prevChecked => !prevChecked); 
-  }
+    setIsChecked(prevChecked => {
+      const newChecked = !prevChecked;  
+      if (newChecked) {
+        setSelectedEmployee(""); 
+      }
+      return newChecked; 
+    });
+  };
+  
 
-  console.log(selectedEmployee); 
+  console.log("ischecked?", isChecked);
+  console.log("employee", selectedEmployee); 
 
   const [hasFileError,setHasFileError] = useState(false); 
   const [fileErrorMessage, setFileErrorMessage] = useState("");
@@ -141,8 +154,15 @@ function FileTicket() {
           'Content-Type': 'multipart/form-data' 
         }
       });
-
       console.log("passed data:", response.data); 
+      toast.success("Your ticket has been submitted successfully.");
+      handleCancelClick(); 
+
+      //2 seconds delay 
+      setTimeout(() => {
+        navigate('/tickets'); 
+      }, 2000); 
+
     }
     catch(error) {
       console.error("Error posting data", error); 
@@ -150,7 +170,7 @@ function FileTicket() {
   }
 
   const isButtonDisabled = () => {
-    return !selectedDepartment || !selectedEmployee || !selectedPriority || !titleInput || !descriptionInput || hasTitleError() || hasDescriptionError() || hasFileError;
+    return !selectedDepartment  || !selectedPriority || !titleInput || !descriptionInput || hasTitleError() || hasDescriptionError() || hasFileError;
   }
 
   const hasTitleError = () => {
@@ -200,6 +220,7 @@ function FileTicket() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+        <ToastContainer />
         <Navbar />
         <div className="flex flex-col md:flex-row gap-x-10 pt-20">
             <div className="flex-none md:w-20 lg:w-28">

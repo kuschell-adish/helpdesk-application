@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { getUrl } from '../utils/apiUtils'; 
 import { useUser } from '../context/UserContext'; 
 
-function TicketList({filtersValue, searchValue}) {
+function TicketList({propTickets, filtersValue, searchValue}) {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState ([]); 
 
@@ -46,6 +46,8 @@ function TicketList({filtersValue, searchValue}) {
       try {
         const response = await axios.get(url);
         const ticketsData = response.data.tickets;
+        localStorage.setItem('tickets', JSON.stringify(ticketsData));
+
         const userTickets = ticketsData.filter(ticket => ticket.user_id === user?.id); 
         setTickets(userTickets);
       }
@@ -53,11 +55,21 @@ function TicketList({filtersValue, searchValue}) {
         console.error("Error fetching data", error); 
       }
     };
-    fetchTickets(); 
-  }, [url]);
 
+    if (propTickets && propTickets.length > 0) {
+      const userTickets = propTickets.filter(ticket => ticket.user_id === user?.id); 
+      setTickets(userTickets);  
+    } else {
+      const storedTickets = localStorage.getItem('tickets');
+      if (storedTickets) {
+        setTickets(JSON.parse(storedTickets));
+      } else {
+        fetchTickets();
+      }
+    }
+  }, [url, user?.id, propTickets]);
 
-
+  
   useEffect(() => {
     const statusMap = {
       new: 1,    
@@ -139,7 +151,9 @@ function TicketList({filtersValue, searchValue}) {
                             <td className="px-5 py-3">{format(new Date(ticket.created_at), 'MMMM d, yyyy')}</td>
                             <td className="px-5 py-3">{ticket.title}</td>
                             <td className="px-5 py-3">{ticket.department.name}</td>
-                            <td className="px-5 py-3">{ticket.employee.first_name} {ticket.employee.last_name} </td>
+                            <td className={`px-5 py-3 ${!ticket?.employee && 'italic'}`}>
+                              {ticket?.employee ?  `${ticket.employee.first_name} ${ticket.employee.last_name}` : 'Unassigned' }
+                            </td>
                             <td className="px-5 py-3">
                                 <span className={`inline-block rounded-full py-1.5 w-3/4 text-white text-center ${statusClasses(ticket.status.category)}`}>
                                     {ticket.status.category}

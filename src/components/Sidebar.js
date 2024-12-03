@@ -4,6 +4,7 @@ import NavItem from './NavItem';
 function Sidebar() {
     const handleLogout = () => {
         localStorage.removeItem('user'); 
+        localStorage.removeItem('tickets'); 
     }
     
   return (
