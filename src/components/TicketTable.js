@@ -1,12 +1,12 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
 import axios from 'axios'; 
-import { format } from 'date-fns';
+import moment from 'moment';
 
 import { getUrl } from '../utils/apiUtils'; 
 import { useUser } from '../context/UserContext'; 
 
-function TicketList({propTickets, filtersValue, searchValue}) {
+function TicketTable({propTickets, filtersValue, searchValue}) {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState ([]); 
 
@@ -148,7 +148,7 @@ function TicketList({propTickets, filtersValue, searchValue}) {
                     <tbody>
                     {filteredTickets.map(ticket => (
                         <tr key={ticket.id} className="border-b">
-                            <td className="px-5 py-3">{format(new Date(ticket.created_at), 'MMMM d, yyyy')}</td>
+                            <td className="px-5 py-3">{moment(ticket.created_at).format('MMMM D, YYYY')}</td>
                             <td className="px-5 py-3">{ticket.title}</td>
                             <td className="px-5 py-3">{ticket.department.name}</td>
                             <td className={`px-5 py-3 ${!ticket?.employee && 'italic'}`}>
@@ -177,6 +177,6 @@ function TicketList({propTickets, filtersValue, searchValue}) {
 }
 
 
-export default TicketList
+export default TicketTable
 
 

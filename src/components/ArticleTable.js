@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'; 
+import { Link } from 'react-router-dom';
 import axios from 'axios'; 
 
-function ArticleList({searchValue}) {
+import { getUrl } from '../utils/apiUtils'; 
+
+function ArticleTable({searchValue}) {
     const [articles, setArticles] = useState([]); 
     const [filteredArticles, setFilteredArticles] = useState([]); 
-    const url = "http://127.0.0.1:8000/api/articles";
+    const url = getUrl('articles'); 
     useEffect(() => {
         const fetchArticles = async() => {
             try {
@@ -30,7 +33,8 @@ function ArticleList({searchValue}) {
             {filteredArticles.map(article => (
                 <tr key={article.id} className="text-sm">
                     <td className="py-2 px-4 border-b border-gray-300">
-                        <a href="#" className="hover:text-orange-500">{article.title}</a></td>
+                        <Link to={`/articles/${article.id}`} className="hover:text-orange-500">{article.title}</Link>
+                    </td>
                 </tr>
             ))}
             </tbody>
@@ -39,4 +43,4 @@ function ArticleList({searchValue}) {
   )
 }
 
-export default ArticleList
+export default ArticleTable

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
-import TicketList from '../components/TicketList'
+import TicketTable from '../components/TicketTable'
 import Searchbar from '../components/Searchbar';
 import Filter from '../components/Filter';
 
@@ -66,7 +66,7 @@ function AllTickets() {
               onChange={handleSearchChange}
               />
                <Filter onFilterChange={handleFilterChange} />
-              <TicketList 
+              <TicketTable 
                 propTickets={newTickets}
                 filtersValue={filtersValue} 
                 searchValue={searchValue} 

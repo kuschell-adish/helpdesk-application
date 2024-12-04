@@ -36,7 +36,9 @@ function Login() {
     return !emailInput || !passwordInput; 
   }
 
-  const handleLoginClick = async() => {
+  const handleLoginClick = async(e) => {
+    e.preventDefault();
+
     try {
       const response = await axios.post(url, {emailInput, passwordInput});
       
@@ -55,10 +57,16 @@ function Login() {
         setErrorMessage("Email is not registered into our accounts. Please contact administrator for assistance."); 
       }
       //invalid credentials
-      if (error.response.status === 401) {
+      else if (error.response.status === 401) {
         console.error('401 Error:', error.response.data);
         setHasInputError(true);
         setErrorMessage("Invalid credentials. Make sure you are a registered user."); 
+      }
+      //forbidden
+      else if (error.response.status === 403) {
+        console.error('403 Error:', error.response.data);
+        setHasInputError(true);
+        setErrorMessage("Your account is inactive. Please contact administrator for assistance."); 
       }
       console.error("Error posting data", error); 
     }
@@ -71,6 +79,7 @@ function Login() {
         <p className="text-4xl font-bold">Empowering support, one ticket at a time with adish HAP.</p>
       </div>
       <div className="w-1/4">
+      <form onSubmit={handleLoginClick}>
           <Input
             label="Work Email"
             type="email"
@@ -99,12 +108,12 @@ function Login() {
                 type="submit"
                 label="Login"
                 isPrimary={true}
-                onClick={handleLoginClick}
                 isDisabled={isButtonDisabled()}
                 />
         <p className="text-sm text-center mt-5">
           No account yet? <a href="#" className="text-orange-500 underline hover:text-orange-500">Contact us</a>.
         </p>
+        </form>
       </div>
 </div>
 

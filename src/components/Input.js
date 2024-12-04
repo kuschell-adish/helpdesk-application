@@ -64,7 +64,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
               className="absolute top-1/3 mt-2.5 right-2 transform -translate-y-1/2 cursor-pointer"
             />
           )}
-          {hasError &&  <p className="absolute mt-1 text-xs text-red-500">{error}</p>}
+          {hasError &&  <p className="absolute my-1 text-xs text-red-500">{error}</p>}
         </div>
       ) : 
       ( 

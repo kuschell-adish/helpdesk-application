@@ -2,7 +2,9 @@ import React from 'react'
 import { NavLink, useMatch } from 'react-router-dom';
 
 function NavItem({link, icon, label, onClick}) {
-    const isActive = useMatch(link); 
+    const matchParent = useMatch(link);
+    const matchChildren = useMatch(`${link}/:id`);
+    const isActive = matchParent || matchChildren; 
   return (
     <NavLink 
         to ={link}

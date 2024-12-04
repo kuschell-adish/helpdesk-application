@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
-import ArticleList from '../components/ArticleList';
-import Searchbar from '../components/Searchbar';
+import Navbar from '../../components/Navbar';
+import Sidebar from '../../components/Sidebar';
+import ArticleTable from '../../components/ArticleTable';
+import Searchbar from '../../components/Searchbar';
 
-function Articles() {
+function ArticleList() {
     const [searchValue, setSearchValue] = useState("");
     const handleSearchChange = (value) => {
         setSearchValue(value); 
@@ -27,11 +27,11 @@ function Articles() {
               value={searchValue}
               onChange={handleSearchChange}
               />
-              <ArticleList searchValue={searchValue}/>
+              <ArticleTable searchValue={searchValue}/>
             </div>
         </div>
     </div>
   )
 }
 
-export default Articles
+export default ArticleList
