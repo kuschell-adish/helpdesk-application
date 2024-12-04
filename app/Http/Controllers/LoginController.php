@@ -25,8 +25,16 @@ class LoginController extends Controller
             ], 404); 
         }
 
+        //forbidden access 
         if (Auth::guard('user')->attempt(['email' => $request->emailInput, 'password' => $request->passwordInput])) {
             $user = Auth::guard('user')->user()->load('company');
+
+            if ($user->type_id === 2){
+                return response()->json([
+                    'error' => 'user is forbidden'
+                ], 403); 
+            }
+            //succesful
             return response()->json([
                 'message' => 'successful', 
                 'user' => $user

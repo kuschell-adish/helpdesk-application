@@ -14,4 +14,10 @@ class ArticleController extends Controller
 
         return response()->json(['articles' => $articles]); 
     }
+
+    public function show ($id) {
+        $article = Article::findOrFail($id)->load('user.company', 'user.department');
+
+        return response()->json(['article' => $article]); 
+    }
 }
