@@ -2,6 +2,7 @@ import React from 'react'
 import { useEffect, useState } from 'react';
 import axios from 'axios'; 
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 import { getUrl } from '../utils/apiUtils'; 
 import { useUser } from '../context/UserContext'; 
@@ -165,7 +166,7 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
                                 </span>
                             </td>
                             <td className="px-5 py-3">
-                                <a href="#" className="p-2 font-medium text-blue-500 rounded-sm hover:bg-blue-500 hover:text-white">View</a>
+                                <Link to={`/tickets/${ticket.id}`} className="p-2 font-medium text-blue-500 rounded-sm hover:bg-blue-500 hover:text-white">View</Link>
                             </td>
                         </tr>
                     ))}

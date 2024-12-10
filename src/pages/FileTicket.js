@@ -144,6 +144,7 @@ function FileTicket() {
       formData.append('selectedPriority', selectedPriority);
       formData.append('titleInput', titleInput);
       formData.append('descriptionInput', descriptionInput); 
+      formData.append('filesInput', filesInput); 
 
       filesInput.forEach(file => {
         formData.append('filesInput[]', file); 
@@ -216,6 +217,8 @@ function FileTicket() {
       setFilteredEmployees([]); 
     }
   },[selectedDepartment, employees]);
+
+  console.log("files", filesInput); 
 
 
   return (

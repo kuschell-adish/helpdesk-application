@@ -57,7 +57,7 @@ console.log(article);
               <div className="p-5 flex flex-col gap-y-3">
                 <p className="text-xs italic text-gray-700">Last updated on {moment(article.updated_at).format('MMMM D, YYYY')}</p>
                 <p className="font-semibold text-lg">{article?.title}</p>
-                <div className="article-content text-sm" dangerouslySetInnerHTML={{ __html: article.content }} />
+                <div className="text-sm" dangerouslySetInnerHTML={{ __html: article.content }} />
               </div>
             </div>
         </div>

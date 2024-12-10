@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import Navbar from '../components/Navbar'
-import Sidebar from '../components/Sidebar'
-import TicketTable from '../components/TicketTable'
-import Searchbar from '../components/Searchbar';
-import Filter from '../components/Filter';
+import Navbar from '../../components/Navbar'
+import Sidebar from '../../components/Sidebar'
+import TicketTable from '../../components/TicketTable'
+import Searchbar from '../../components/Searchbar';
+import Filter from '../../components/Filter';
 
 import axios from 'axios'; 
-import { getUrl } from '../utils/apiUtils'; 
+import { getUrl } from '../../utils/apiUtils'; 
 
-function AllTickets() {
+function TicketList() {
   const [searchValue, setSearchValue] = useState("");
   const [newTickets, setNewTickets] = useState([]); 
   const handleSearchChange = (value) => {
@@ -77,4 +77,4 @@ function AllTickets() {
   )
 }
 
-export default AllTickets
+export default TicketList
