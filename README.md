@@ -63,4 +63,10 @@ npm install
 ```
 composer install
 ```
-* If you have encountered **500 server error**, .env file must be created, a .env example has been provided in this source code. 
+* If you have encountered **500 server error**, .env file must be created, a .env example has been provided in this source code.
+
+## Acknowledgements
+https://react-icons.github.io/react-icons/
+* [react-icons](https://react-icons.github.io/react-icons/)
+* [react-modal-image](https://www.npmjs.com/package/react-modal-image)
+* [react-toastify](https://www.npmjs.com/package/react-toastify)
