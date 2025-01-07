@@ -9,9 +9,14 @@ function ArticleTable({searchValue}) {
     const [filteredArticles, setFilteredArticles] = useState([]); 
     const url = getUrl('articles'); 
     useEffect(() => {
+        const token  = sessionStorage.getItem('token'); 
         const fetchArticles = async() => {
             try {
-                const response = await axios.get(url); 
+                const response = await axios.get(url,{
+                    headers: {
+                      Authorization: `Bearer ${token}`
+                    }
+                  }); 
                 const articlesData = response.data.articles; 
                 setArticles(articlesData); 
             }

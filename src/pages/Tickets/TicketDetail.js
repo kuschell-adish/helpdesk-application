@@ -19,10 +19,14 @@ function TicketDetail() {
 
     useEffect(() => {
         document.title = 'adish HAP | Knowledge Base'
-
+        const token = sessionStorage.getItem('token');
         const fetchTicket = async() => {
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    headers: {
+                      Authorization: `Bearer ${token}`
+                    }
+                  });
                 const ticketData = response.data.ticket;
                 setTicket(ticketData);
             }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -21,19 +21,23 @@ function UserProfile() {
     'image/bmp'
   ]);
   const [profilePicture, setProfilePicture] = useState("");
-  const url = getUrl(`users/${user?.id}`);   
+  const userId = user?.id; 
+  const url = getUrl(`user/profile`);   
 
+  const token = sessionStorage.getItem('token');
   const handleUpdateClick = async() => {
    try {
     const formData = new FormData();
+
     formData.append('profilePicture', profilePicture); 
 
     const response = await axios.put(url, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data' 
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`
       }
     });
-    console.log("passed data:", response.data); 
+    console.log("passed formData:", response.data); 
     toast.success("Your profile has been updated successfully.");
    }
    catch(error) {
@@ -50,7 +54,6 @@ function UserProfile() {
     const maxSize = 2 * 1024 * 1024; //2mb 
     let errorMessage = ""; 
     let allowedFiles = true; 
-    console.log(file); 
     
     //wrong file type
     if (!fileTypes.has(file.type)) {
@@ -82,16 +85,36 @@ function UserProfile() {
     }
   }
 
-  console.log("user", user?.profile_picture);
+  const userUrl = getUrl(`auth/user`);   
+  const [authUser, setAuthUser] = useState(""); 
+  useEffect(() => {
+    const token  = sessionStorage.getItem('token'); 
+    const fetchAuthUser = async() => {
+        try {
+            const response = await axios.get(userUrl,{
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              }); 
+            const userData = response.data.user; 
+            setAuthUser(userData); 
+        }
+        catch(error) {
+            console.error("Error fetching data", error);
+        }
+    }; 
+    fetchAuthUser();
+},[userUrl]);
+
+console.log('authUser', authUser); 
+
+
 
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
         <label htmlFor="profile_picture" className="text-sm font-medium">Profile Picture</label>
         <img id="profile_picture_preview" src={preview} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
-
-        <img  src={`http://127.0.0.1:8000${user.profile_picture}`} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
-
         <input type="file" name="profile_picture" id="profile_picture" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg, .tiff, .tif" onChange={handleFileChange}></input>
         <div className="flex flex-col mb-5 text-center">
           <p className="text-xs text-gray-400 mt-1 mb-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
@@ -117,7 +140,7 @@ function UserProfile() {
           label="Middle Name"
           type="text"
           name="middle_name"
-          value={user?.middle_name || ''}
+          value={user?.middle_name}
           isDisabled={true}
         />
         <Input

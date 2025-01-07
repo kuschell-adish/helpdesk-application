@@ -43,9 +43,14 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
   } 
 
   useEffect(() => {
+    const token = sessionStorage.getItem('token'); 
     const fetchTickets = async() => {
       try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         const ticketsData = response.data.tickets;
         localStorage.setItem('tickets', JSON.stringify(ticketsData));
 

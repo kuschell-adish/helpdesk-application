@@ -13,8 +13,6 @@ import ArticleDetail from './pages/Articles/ArticleDetail';
 import Profile from './pages/Profile';
 
 import { UserProvider } from './context/UserContext';
-
-import Test from './pages/Test';
 import { useEffect } from 'react';
 function App() {
   const navigate = useNavigate();
@@ -39,7 +37,6 @@ function App() {
             <Route path="/articles" element={<PrivateRoute element={<ArticleList />} />} />
             <Route path="/articles/:id" element={<PrivateRoute element={<ArticleDetail />} />} />
           <Route path="/profile" element={<PrivateRoute element={<Profile />} />}/>
-          <Route path="/test" element={<Test />} />
         </Routes>
     </UserProvider>
   );

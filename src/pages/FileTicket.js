@@ -150,9 +150,12 @@ function FileTicket() {
         formData.append('filesInput[]', file); 
       }); 
 
+      const token = sessionStorage.getItem('token');
+
       const response = await axios.post(postUrl, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data' 
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
         }
       });
       console.log("passed data:", response.data); 

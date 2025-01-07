@@ -15,58 +15,46 @@ function Login() {
     document.title = 'adish HAP | Login';
   }, []); 
 
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [hasInputError, setHasInputError] = useState(false); 
   const [errorMessage, setErrorMessage] = useState(""); 
   
   const { setUserData } = useUser(); 
   const navigate = useNavigate();
-  const url = getUrl('login');   
+  const url = getUrl('auth/login');   
 
   const handleEmailChange = (value) => {
-    setEmailInput(value); 
+    setEmail(value); 
   }
 
   const handlePasswordChange = (value) => {
-    setPasswordInput(value); 
+    setPassword(value); 
   }
 
   const isButtonDisabled = () => {
-    return !emailInput || !passwordInput; 
+    return !email || !password; 
   }
 
   const handleLoginClick = async(e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(url, {emailInput, passwordInput});
-      
+      const response = await axios.post(url, {email, password});        
       if (response.status === 200) {
         setUserData(response.data.user);
+        sessionStorage.setItem('token', response.data.accessToken); 
+
         navigate('/dashboard'); 
-        console.log("user data", response.data.user)
+        console.log("user data", response.data)
       }
-  
     }
     catch(error) {
-      //user does not exist
-      if (error.response.status === 404) {
-        console.error('404 Error:', error.response.data);
-        setHasInputError(true); 
-        setErrorMessage("Email is not registered into our accounts. Please contact administrator for assistance."); 
-      }
       //invalid credentials
-      else if (error.response.status === 401) {
+      if (error.response.status === 401) {
         console.error('401 Error:', error.response.data);
         setHasInputError(true);
         setErrorMessage("Invalid credentials. Make sure you are a registered user."); 
-      }
-      //forbidden
-      else if (error.response.status === 403) {
-        console.error('403 Error:', error.response.data);
-        setHasInputError(true);
-        setErrorMessage("Your account is inactive. Please contact administrator for assistance."); 
       }
       console.error("Error posting data", error); 
     }
@@ -84,7 +72,7 @@ function Login() {
             label="Work Email"
             type="email"
             name="email"
-            value={emailInput}
+            value={email}
             placeholder="Enter your work email"
             onChange={handleEmailChange}
           />
@@ -97,7 +85,7 @@ function Login() {
             <Input
               type="password"
               name="password"
-              value={passwordInput}
+              value={password}
               placeholder="Enter your work password"
               onChange={handlePasswordChange}
               hasError={hasInputError}

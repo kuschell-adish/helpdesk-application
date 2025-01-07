@@ -36,10 +36,15 @@ function TicketList() {
 
   useEffect(() => {
     document.title = "adish HAP | My Tickets"
-
+    const token = sessionStorage.getItem('token');
+    
     const fetchTickets = async () => {
       try {
-        const response = await axios.get(url); 
+        const response = await axios.get(url,{
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         setNewTickets(response.data.tickets || []); 
       } catch (error) {
         console.error('Error fetching tickets:', error);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NavItem from './NavItem';
+import axios from 'axios';
 
 import { LuLayoutDashboard } from "react-icons/lu";
 import { TiDocumentAdd } from "react-icons/ti";
@@ -8,12 +9,43 @@ import { GoQuestion } from "react-icons/go";
 import { CiUser } from "react-icons/ci";
 import { IoLogOutOutline } from "react-icons/io5";
 
+import { getUrl } from '../utils/apiUtils';
+import { useNavigate } from 'react-router-dom';
+
+
 function Sidebar() {
     const [user, setUser] = useState(""); 
-    const handleLogout = () => {
-        localStorage.removeItem('user'); 
-        localStorage.removeItem('tickets'); 
-        setUser(null); 
+    const url = getUrl('auth/logout'); 
+    const navigate = useNavigate(); 
+    const token = localStorage.getItem('token');
+    console.log(token);
+    const handleLogout = (e) => {
+        // const logOut = async() => {
+        //     try {
+        //         const response = await axios.post(url, {
+        //             headers: {
+        //                 'authorization': token
+        //             }
+        //         }); 
+        //         console.log(response.data.message); 
+
+        //         localStorage.removeItem('user'); 
+        //         localStorage.removeItem('tickets'); 
+        //         localStorage.removeItem('token'); 
+        //         setUser(null); 
+
+        //         navigate('/login'); 
+               
+        //     }
+        //     catch(error){
+        //         console.error("Error getting data", error); 
+        //     }
+        // }
+        // logOut(); 
+                 localStorage.removeItem('user'); 
+                localStorage.removeItem('tickets'); 
+                localStorage.removeItem('token'); 
+                setUser(null); 
     }
 
     useEffect(() => {
