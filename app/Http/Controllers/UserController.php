@@ -10,17 +10,20 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\User;
 
 class UserController extends Controller
-{
-    public function update (Request $request, $id) {
-        $user = User::findOrFail($id);
+{   
+
+    public function updateProfile (Request $request) {
+        $user = $request->user();
 
         if ($request->hasFile('profilePicture')) {
-            $uploadedFile = $request->file('profilePicture');
-            $path = $uploadedFile->store('profile_picture', 'public'); 
-            $user->profile_picture = Storage::url($path);  
+            $path = $file->store('profile_picture', 'public'); 
+            $user->profile_picture = Storage::url($path);
+            $user->save();
         }
-        $user->update(); 
 
-        return response()->json(['message' => 'User data updated successfully', 'data' => $user]); 
+        return response()->json([
+            'message' => 'Profile updated successfully.',
+            'user' => $user,
+        ]);
     }
 }
