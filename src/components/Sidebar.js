@@ -17,8 +17,8 @@ function Sidebar() {
     const [user, setUser] = useState(""); 
     const url = getUrl('auth/logout'); 
     const navigate = useNavigate(); 
-    const token = localStorage.getItem('token');
-    console.log(token);
+    // const token = localStorage.getItem('token');
+    // console.log(token);
     const handleLogout = (e) => {
         // const logOut = async() => {
         //     try {
