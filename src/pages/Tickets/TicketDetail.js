@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import moment from 'moment';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -13,25 +12,18 @@ import Attachment from '../../components/Attachment';
 import TicketLogs from '../../components/TicketLogs';
 import Comment from '../../components/Comment';
 
-import { getUrl } from '../../utils/apiUtils';
-import { useUser } from '../../context/UserContext';
-
+import axiosInstance from '../../utils/axiosInstance';
 
 function TicketDetail() {
     const { id } = useParams();
     const [ticket, setTicket] = useState("");
-    const url = getUrl(`tickets/${id}`); 
+    const employeeName = ticket.employee ? `${ticket?.employee?.first_name} ${ticket?.employee?.last_name}` : 'Unassigned'; 
 
     useEffect(() => {
         document.title = 'adish HAP | Knowledge Base'
-        const token = sessionStorage.getItem('token');
         const fetchTicket = async() => {
             try {
-                const response = await axios.get(url, {
-                    headers: {
-                      Authorization: `Bearer ${token}`
-                    }
-                  });
+                const response = await axiosInstance.get(`/tickets/${id}`);
                 const ticketData = response.data.ticket;
                 setTicket(ticketData);
             }
@@ -42,40 +34,6 @@ function TicketDetail() {
         fetchTicket(); 
     },[id]);
 
-    const { user } = useUser(); 
-    const [comment, setComment] = useState("");
-
-    const handleCommentChange = (value) => {
-        setComment(value); 
-    }
-    const postUrl = getUrl('comments'); 
-
-    const handleCommentSubmit = async(e) => {
-        e.preventDefault(); 
-        try {
-            const formData = new FormData();
-
-            formData.append("userId", user?.id); 
-            formData.append("ticketId", ticket?.id );
-            formData.append("commentText", comment); 
-
-            const token = sessionStorage.getItem('token');
-
-            const response = await axios.post(postUrl, formData, {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              });
-              console.log("passed data:", response.data); 
-              toast.success("Your comment has been submitted successfully.");
-              setComment(""); 
-        }
-        catch(error) {
-            console.error("Error posting data", error); 
-        }
-    }
-
-    const employeeName = ticket.employee ? `${ticket?.employee?.first_name} ${ticket?.employee?.last_name}` : 'Unassigned'; 
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />
@@ -149,11 +107,8 @@ function TicketDetail() {
             </div>
             <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
                 <Comment
-                    value = {comment}
-                    placeholder={`Comment as ${user?.first_name}`}
                     ticketId = {ticket?.id}
-                    onChange={handleCommentChange}
-                    onSubmit = {handleCommentSubmit} />
+                />
             </div>
             </div>
         </div>

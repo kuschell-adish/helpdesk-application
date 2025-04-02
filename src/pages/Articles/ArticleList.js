@@ -4,14 +4,30 @@ import Sidebar from '../../components/Sidebar';
 import ArticleTable from '../../components/ArticleTable';
 import Searchbar from '../../components/Searchbar';
 
-function ArticleList() {
-    const [searchValue, setSearchValue] = useState("");
-    const handleSearchChange = (value) => {
-        setSearchValue(value); 
-    }
+import axiosInstance from '../../utils/axiosInstance';
+
+function ArticleList() {    
+    const [articles, setArticles] = useState([]); 
     useEffect(() => {
-        document.title = 'adish HAP | Knowledge Base';
-    },[]) 
+      document.title = 'adish HAP | Knowledge Base';
+      const fetchArticles = async() => {
+          try {
+              const response = await axiosInstance.get('/articles'); 
+              const articlesData = response.data.articles; 
+              setArticles(articlesData); 
+          }
+          catch(error) {
+              console.error("Error fetching data", error);
+          }
+      }; 
+      fetchArticles();
+  },[]);
+
+  const [searchValue, setSearchValue] = useState("");
+  const handleSearchChange = (value) => {
+      setSearchValue(value); 
+  }; 
+
   return (
     <div className="bg-gray-50 min-h-screen">
         <Navbar />
@@ -27,7 +43,7 @@ function ArticleList() {
               value={searchValue}
               onChange={handleSearchChange}
               />
-              <ArticleTable searchValue={searchValue}/>
+              <ArticleTable searchValue={searchValue} articles={articles}/>
             </div>
         </div>
     </div>

@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios';
 import { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,7 +6,7 @@ import Input from '../components/Input';
 import Navbar from '../components/Navbar';
 import Button from '../components/Button';
 
-import { getUrl } from '../utils/apiUtils'; 
+import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext';
 
 function Login() {
@@ -22,7 +21,6 @@ function Login() {
   
   const { setUserData } = useUser(); 
   const navigate = useNavigate();
-  const url = getUrl('auth/login');   
 
   const handleEmailChange = (value) => {
     setEmail(value); 
@@ -35,12 +33,13 @@ function Login() {
   const isButtonDisabled = () => {
     return !email || !password; 
   }
+  
 
   const handleLoginClick = async(e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(url, {email, password});        
+      const response = await axiosInstance.post('/auth/login', {email, password});        
       if (response.status === 200) {
         setUserData(response.data.user);
         sessionStorage.setItem('token', response.data.accessToken); 

@@ -1,17 +1,13 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import axios from 'axios'; 
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
-import { getUrl } from '../utils/apiUtils'; 
 import { useUser } from '../context/UserContext'; 
 
 function TicketTable({propTickets, filtersValue, searchValue}) {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState ([]); 
-
-  const url = getUrl('tickets');   
   const { user } = useUser(); 
 
   const statusClasses = (category) => {
@@ -43,25 +39,6 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
   } 
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token'); 
-    const fetchTickets = async() => {
-      try {
-        const response = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        const ticketsData = response.data.tickets;
-        localStorage.setItem('tickets', JSON.stringify(ticketsData));
-
-        const userTickets = ticketsData.filter(ticket => ticket.user_id === user?.id); 
-        setTickets(userTickets);
-      }
-      catch (error) {
-        console.error("Error fetching data", error); 
-      }
-    };
-
     if (propTickets && propTickets.length > 0) {
       const userTickets = propTickets.filter(ticket => ticket.user_id === user?.id); 
       setTickets(userTickets);  
@@ -69,11 +46,9 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
       const storedTickets = localStorage.getItem('tickets');
       if (storedTickets) {
         setTickets(JSON.parse(storedTickets));
-      } else {
-        fetchTickets();
-      }
+      } 
     }
-  }, [url, user?.id, propTickets]);
+  }, [user?.id, propTickets]);
 
   
   useEffect(() => {

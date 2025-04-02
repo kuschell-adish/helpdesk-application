@@ -1,6 +1,5 @@
 import React from 'react';
 import { useEffect, useState} from 'react';
-import axios from 'axios';
 
 import Navbar from '../components/Navbar';
 import PriorityLevel from '../components/PriorityLevel';
@@ -8,7 +7,7 @@ import Sidebar from '../components/Sidebar';
 import TicketCounts from '../components/TicketCounts';
 import TicketStatus from '../components/TicketStatus';
 
-import { getUrl } from '../utils/apiUtils'; 
+import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext'; 
 
 function Dashboard() {
@@ -22,21 +21,14 @@ function Dashboard() {
     const [highTicketCount, setHighTicketCount] = useState(0);
 
     const [departmentData, setDepartmentData] = useState([]);
-
-    const url = getUrl('tickets');   
     const { user } = useUser(); 
 
     useEffect(() => {
         document.title = 'adish HAP | Dashboard';
-        const token = sessionStorage.getItem('token');
         
         const fetchTickets = async() => {
         try {
-            const response = await axios.get(url, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            });
+            const response = await axiosInstance.get('/tickets');
             const ticketsData = response.data.tickets;
            
             if (user) {
@@ -104,7 +96,7 @@ function Dashboard() {
        if (user) {
         fetchTickets();
        }
-    }, [user, url]);
+    }, [user]);
 
     const statusData = [newTicketCount, progressTicketCount, resolvedTicketCount, closedTicketCount];
     const priorityData = [lowTicketCount, mediumTicketCount, highTicketCount]; 

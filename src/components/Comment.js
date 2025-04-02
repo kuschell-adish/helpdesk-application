@@ -1,32 +1,27 @@
 import React, {useState, useEffect} from 'react';
 import moment from 'moment';
-import axios from 'axios';
 
-import { getUrl } from '../utils/apiUtils';
+import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext'; 
 import { toast } from 'react-toastify';
 
 import { HiOutlinePencil } from "react-icons/hi";
 import { IoTrashBinOutline } from "react-icons/io5";
 
-import Button from './Button';
+import Modal from './Modal'; 
 
-function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
+function Comment({ticketId}) {
     const { user } = useUser(); 
+    const [comment, setComment] = useState([]);
     const [comments, setComments] = useState([]);
     const [editingComment, setEditingComment] = useState('');
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [deletingCommentId, setDeletingCommentId] = useState(null);
 
     useEffect(() => {
-        const token = sessionStorage.getItem('token'); 
-        const url = getUrl('comments'); 
         const fetchComments = async() => {
             try {
-                const response = await axios.get(url, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }, 
+                const response = await axiosInstance.get('/comments', {
                     params: {ticketId}
                 })
                 const commentsData = response.data.comments;
@@ -40,8 +35,29 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
     },[ticketId]);
 
     const handleChange = (e) => {
-        onChange(e.target.value);
+        setComment(e.target.value); 
     };
+
+    const handleCommentSubmit = async(e) => {
+        e.preventDefault(); 
+        try {
+            const formData = new FormData();
+
+            formData.append("userId", user?.id); 
+            formData.append("ticketId", ticketId);
+            formData.append("commentText", comment); 
+
+            const response = await axiosInstance.post('comments', formData);
+              console.log("passed data:", response.data); 
+              toast.success("Your comment has been submitted successfully.");
+              setComment(""); 
+              setComments((comments) => [response.data.data, ...comments]);
+        }
+        catch(error) {
+            console.error("Error posting data", error); 
+        }
+    }; 
+
     const [showEdit, setShowEdit] = useState(false);
     const handleEditClose = () => setShowEdit(false);
     const handleShowEdit = (commentId, commentText) => {
@@ -50,17 +66,13 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
         setShowEdit(true);
     };
 
-    const putUrl = getUrl(`comments/${editingCommentId}`); 
-    const token = sessionStorage.getItem('token'); 
     const handleEditChange = (e) => {
         setEditingComment(e.target.value);
     };
+    
     const handleEditSubmit = async () => {
         try {
-            const response = await axios.put(putUrl, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
+            const response = await axiosInstance.put(`/comments/${editingCommentId}`, {
                 commentText: editingComment 
             }); 
             console.log("Successful putting data", response);
@@ -85,14 +97,10 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
         setDeletingCommentId(commentId); 
         setShowDelete(true);
     };
-    const destroyUrl = getUrl(`comments/${deletingCommentId}`); 
+
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(destroyUrl, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
-            }); 
+            const response = await axiosInstance.delete(`/comments/${deletingCommentId}`); 
             console.log("Successful deleting data", response);
             toast.success("Your comment has been deleted successfully.");
 
@@ -107,6 +115,18 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
         }
     }
 
+    const isSubmitDisabled = () => {
+        return !comment || comment.length < 3;
+    };
+
+    const isCommentValid = comment && typeof comment === 'string' && comment.trim().length < 3;
+
+    const isEditDisabled = () => {
+        return !editingComment || editingComment.length < 3;
+    };
+
+    const isEditingComentValid = editingComment && typeof editingComment === 'string' && editingComment.trim().length < 3;
+
   return (
     <div className="w-full p-1">
         <p className="text-sm font-semibold">
@@ -115,17 +135,17 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
             `Discussions (${comments.length})` : 
             'Discussion (1)'
             }</p>
-        <form className="mt-5" onSubmit={onSubmit}>
+        <form className="mt-5" onSubmit={handleCommentSubmit}>
             <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
                 <div className="px-4 py-2 bg-white rounded-t-lg">
                     <label htmlFor="comment" className="sr-only">Your comment</label>
                     <textarea 
                         id="comment" 
                         rows="4" 
-                        className="w-full px-0 text-sm text-gray-900 bg-white border-0" 
-                        placeholder={placeholder}
+                        className="w-full px-2 text-sm text-gray-900 bg-white border-0" 
+                        placeholder={`Comment as ${user?.first_name}`}
                         required 
-                        value = {value}
+                        value = {comment}
                         onChange={handleChange}>
                     </textarea>
                 </div>
@@ -143,12 +163,17 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
                         </button>
                     </div>
                     <div className="flex ps-0 space-x-1 rtl:space-x-reverse sm:ps-2">
-                        <button type="submit" className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-orange-500 hover:bg-orange-600 rounded-lg">
+                        <button 
+                            type="submit" 
+                            disabled= {isSubmitDisabled()}
+                            className={`inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-orange-500 hover:bg-orange-600 rounded-lg ${isSubmitDisabled() && 'opacity-60 cursor-not-allowed'}`}>
                             Post 
                         </button>
+                        
                     </div>
                 </div>
             </div>
+            {isCommentValid && (<p className="text-xs text-red-500 -mt-2">The comment field must contain at least three characters.</p>)}
         </form>
         
         {comments.length > 0 && 
@@ -165,7 +190,7 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
                             />
                             {comment?.user?.first_name} {comment?.user?.last_name}
                         </p>
-                        <p className="text-sm text-gray-600">{moment(comment.updated_at).format('MMMM D, YYYY')}</p>
+                        <p className="text-xs text-gray-600">{moment(comment.updated_at).format('MMMM D, YYYY  h:mm:ss A')}</p>
                     </div>
                     {user.id === comment?.user?.id &&
                     <div className="flex space-x-2 text-orange-500 justify-end">
@@ -179,82 +204,35 @@ function Comment({ticketId, value, placeholder, onChange, onSubmit}) {
         )}
         </div>
         }
-
-        {showEdit && (
-            <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50" onClick={handleEditClose}>
-                <div className="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end">
-                        <button onClick={handleEditClose} className="text-gray-500 hover:text-gray-800">
-                            &times;
-                        </button>
-                    </div>
-
-                    <div className="mt-4">
-                        <form>
-                            <div className="mb-4">
-                                <label htmlFor="textarea" className="block text-sm font-medium text-gray-700">
-                                    Edit your comment
-                                </label>
-                                <textarea
-                                    id="textarea"
-                                    value={editingComment}
-                                    onChange={handleEditChange}
-                                    rows="3"
-                                    className="text-sm mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                    autoFocus
-                                />
-                            </div>
-                        </form>
-                    </div>
-
-                    <div className="w-full flex space-x-4">
-                        <Button 
-                            type="button"
-                            label="Cancel"
-                            isPrimary={false}
-                            onClick={handleEditClose}
-                        />
-                        <Button 
-                            type="submit"
-                            label="Submit"
-                            isPrimary={true}
-                            onClick={handleEditSubmit}
-                        />
-                    </div>
-                </div>
-            </div>
-        )}
-
-        {showDelete && (
-            <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50" onClick={handleDeleteClose}>
-                <div className="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end">
-                        <button onClick={handleDeleteClose} className="text-gray-500 hover:text-gray-800">
-                            &times;
-                        </button>
-                    </div>
-
-                    <div className="mt-4">
-                        <p>Are you sure you want to permanently delete this comment?</p>
-                    </div>
-
-                    <div className="w-full flex space-x-4">
-                        <Button 
-                            type="button"
-                            label="Cancel"
-                            isPrimary={false}
-                            onClick={handleDeleteClose}
-                        />
-                        <Button 
-                            type="submit"
-                            label="Delete"
-                            isDanger={true}
-                            onClick={handleDelete}
-                        />
-                    </div>
-                </div>
-            </div>
-        )}
+        <Modal 
+            isVisible={showEdit} 
+            onClose={handleEditClose} 
+            onSubmit={handleEditSubmit}
+            title="Edit your comment"
+            submitText="Submit"
+            cancelText="Cancel"
+            isDanger={false}
+            hasError={isEditingComentValid}
+            disableValue={isEditDisabled()}
+        >
+            <textarea
+                id="textarea"
+                value={editingComment}
+                onChange={handleEditChange}
+                rows="3"
+                className="text-sm mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                autoFocus
+            />
+        </Modal>
+        <Modal 
+            isVisible={showDelete} 
+            onClose={handleDeleteClose} 
+            onSubmit={handleDelete}
+            title="Are you sure you want to delete this comment?"
+            submitText="Delete"
+            cancelText="Cancel"
+            isDanger={true}
+        />
     </div>
   )
 }
