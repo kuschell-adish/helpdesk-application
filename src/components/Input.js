@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 
@@ -84,19 +84,6 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
       )}
     </div>
   )
-}
-
-Input.propTypes = {
-    label: PropTypes.string,
-    type: PropTypes.string,
-    name: PropTypes.string,
-    value: PropTypes.string,
-    placeholder:PropTypes.string,
-    options: PropTypes.array,
-    onChange: PropTypes.func,
-    isDisabled: PropTypes.bool, 
-    hasError:PropTypes.bool, 
-    error: PropTypes.string, 
 }
 
 export default Input

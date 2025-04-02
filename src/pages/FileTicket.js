@@ -10,10 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Input from '../components/Input';
-import axios from 'axios';
 import Button from '../components/Button';
 
-import { getUrl } from '../utils/apiUtils';
+import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext';
 
 function FileTicket() {
@@ -31,8 +30,6 @@ function FileTicket() {
   const [isChecked, setIsChecked] = useState(false); 
   const [filesInput, setFilesInput] = useState([]);
 
-  const url = getUrl('tickets/create');   
-  const postUrl = getUrl('tickets');  
   const quillRef = useRef(null);
   const { user } = useUser(); 
   const userName = user ? `${user.first_name} ${user.last_name}` : ''; 
@@ -150,12 +147,9 @@ function FileTicket() {
         formData.append('filesInput[]', file); 
       }); 
 
-      const token = sessionStorage.getItem('token');
-
-      const response = await axios.post(postUrl, formData, {
+      const response = await axiosInstance.post('/tickets', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'multipart/form-data'
         }
       });
       console.log("passed data:", response.data); 
@@ -195,7 +189,7 @@ function FileTicket() {
     document.title = 'adish HAP | File Ticket';
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get(url);
+        const response = await axiosInstance.get('/tickets/create');
         const departmentsData = response.data.departments;
         const employeesData = response.data.employees;
         const prioritiesData = response.data.priorities; 
@@ -208,7 +202,7 @@ function FileTicket() {
       }
     };
     fetchDepartments();
-  },[url]); 
+  },[]); 
 
   useEffect(() => {
     if (selectedDepartment) {

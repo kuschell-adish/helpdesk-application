@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; 
 import { useParams } from 'react-router-dom';
-
 import moment from 'moment';
 
-import { getUrl } from '../../utils/apiUtils'; 
+import axiosInstance from '../../utils/axiosInstance';
 
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
@@ -12,19 +10,12 @@ import Sidebar from '../../components/Sidebar';
 function ArticleDetail() {
   const { id } = useParams();
   const [article, setArticle] = useState("");
-  const url = getUrl(`articles/${id}`); 
 
   useEffect(() => {
-    document.title = 'adish HAP | Knowledge Base'
-    const token = sessionStorage.getItem('token'); 
-    
+    document.title = 'adish HAP | Knowledge Base'    
     const fetchArticle = async() => {
         try {
-            const response = await axios.get(url, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            });
+            const response = await axiosInstance.get(`/articles/${id}`);
             const articleData = response.data.article; 
             setArticle(articleData); 
         }
@@ -35,7 +26,6 @@ function ArticleDetail() {
     fetchArticle();
 },[id]);
 
-console.log(article); 
 
   return (
     <div className="bg-gray-50 min-h-screen">

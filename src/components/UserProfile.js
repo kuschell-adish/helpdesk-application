@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,47 +7,25 @@ import Input from './Input';
 import Button from './Button';
 
 import { useUser } from '../context/UserContext'; 
-import { getUrl } from '../utils/apiUtils';
 
 function UserProfile() {
   const { user } = useUser(); 
   const [preview, setPreview] = useState("/default.png");
   const [hasFileError,setHasFileError] = useState(false); 
   const [errorMessage,setErrorMessage] = useState(""); 
+  
   const fileTypes = new Set([
     'image/jpeg', 
     'image/png',  
     'image/bmp'
   ]);
   const [profilePicture, setProfilePicture] = useState("");
-  const userId = user?.id; 
-  const url = getUrl(`user/profile`);   
-
-  const token = sessionStorage.getItem('token');
-  const handleUpdateClick = async() => {
-   try {
-    const formData = new FormData();
-
-    formData.append('profilePicture', profilePicture); 
-
-    const response = await axios.put(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`
-      }
-    });
-    console.log("passed formData:", response.data); 
-    toast.success("Your profile has been updated successfully.");
-   }
-   catch(error) {
-    console.error("Error updating data", error); 
-  }
-  } 
 
   const isButtonDisabled = () => {
     return !profilePicture; 
   }
 
+  //to fix in file handling
   const handleFileChange = (event) => {
     const file = event.target.files[0]; 
     const maxSize = 2 * 1024 * 1024; //2mb 
@@ -85,31 +62,7 @@ function UserProfile() {
     }
   }
 
-  const userUrl = getUrl(`auth/user`);   
-  const [authUser, setAuthUser] = useState(""); 
-  useEffect(() => {
-    const token  = sessionStorage.getItem('token'); 
-    const fetchAuthUser = async() => {
-        try {
-            const response = await axios.get(userUrl,{
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
-              }); 
-            const userData = response.data.user; 
-            setAuthUser(userData); 
-        }
-        catch(error) {
-            console.error("Error fetching data", error);
-        }
-    }; 
-    fetchAuthUser();
-},[userUrl]);
-
-console.log('authUser', authUser); 
-
-
-
+  
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
@@ -171,7 +124,6 @@ console.log('authUser', authUser);
               type="submit"
               label="Update"
               isPrimary={true}
-              onClick={handleUpdateClick}
               isDisabled={isButtonDisabled()}
               />
           </div>

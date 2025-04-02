@@ -1,36 +1,14 @@
 import React, { useEffect, useState } from 'react'; 
 import { Link } from 'react-router-dom';
-import axios from 'axios'; 
 
-import { getUrl } from '../utils/apiUtils'; 
-
-function ArticleTable({searchValue}) {
-    const [articles, setArticles] = useState([]); 
+function ArticleTable({searchValue, articles}) {
     const [filteredArticles, setFilteredArticles] = useState([]); 
-    const url = getUrl('articles'); 
-    useEffect(() => {
-        const token  = sessionStorage.getItem('token'); 
-        const fetchArticles = async() => {
-            try {
-                const response = await axios.get(url,{
-                    headers: {
-                      Authorization: `Bearer ${token}`
-                    }
-                  }); 
-                const articlesData = response.data.articles; 
-                setArticles(articlesData); 
-            }
-            catch(error) {
-                console.error("Error fetching data", error);
-            }
-        }; 
-        fetchArticles();
-    },[url]);
 
     useEffect(() => {
         const result = articles.filter(article => article.title.toLowerCase().includes(searchValue.toLowerCase()));
         setFilteredArticles(result); 
-    },[searchValue, articles])
+    },[searchValue, articles]); 
+
   return (
     <div>
         <table className="border-collapse w-full mt-5">

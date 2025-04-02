@@ -5,8 +5,7 @@ import TicketTable from '../../components/TicketTable'
 import Searchbar from '../../components/Searchbar';
 import Filter from '../../components/Filter';
 
-import axios from 'axios'; 
-import { getUrl } from '../../utils/apiUtils'; 
+import axiosInstance from '../../utils/axiosInstance';
 
 function TicketList() {
   const [searchValue, setSearchValue] = useState("");
@@ -32,25 +31,16 @@ function TicketList() {
     setFiltersValue(newFilters);
   };
 
-  const url = getUrl('tickets');   
-
   useEffect(() => {
     document.title = "adish HAP | My Tickets"
-    const token = sessionStorage.getItem('token');
-    
     const fetchTickets = async () => {
       try {
-        const response = await axios.get(url,{
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await axiosInstance.get('/tickets');
         setNewTickets(response.data.tickets || []); 
       } catch (error) {
         console.error('Error fetching tickets:', error);
       } 
     };
-    
     fetchTickets(); 
   },[]); 
 
