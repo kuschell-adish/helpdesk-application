@@ -11,11 +11,8 @@ import { IoLogOutOutline } from "react-icons/io5";
 
 function Sidebar() {
     const [user, setUser] = useState(""); 
-    //to fix 
-    const handleLogout = (e) => {
-        localStorage.removeItem('user'); 
-        localStorage.removeItem('tickets'); 
-        localStorage.removeItem('token'); 
+    const handleLogout = () => {
+        sessionStorage.removeItem('token'); 
         setUser(null); 
     }
 

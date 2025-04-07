@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import moment from 'moment';
 
 import axiosInstance from '../utils/axiosInstance';
@@ -9,6 +9,7 @@ import { HiOutlinePencil } from "react-icons/hi";
 import { IoTrashBinOutline } from "react-icons/io5";
 
 import Modal from './Modal'; 
+import ModalImage from "react-modal-image";
 
 function Comment({ticketId}) {
     const { user } = useUser(); 
@@ -18,25 +19,71 @@ function Comment({ticketId}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [deletingCommentId, setDeletingCommentId] = useState(null);
 
-    useEffect(() => {
-        const fetchComments = async() => {
-            try {
-                const response = await axiosInstance.get('/comments', {
-                    params: {ticketId}
-                })
-                const commentsData = response.data.comments;
-                setComments(commentsData); 
-            }   
-            catch(error){
-                console.error("Error fetching data", error); 
-            }
+    const fetchComments = async() => {
+        try {
+            const response = await axiosInstance.get('/comments', {
+                params: {ticketId}
+            })
+            const commentsData = response.data.comments;
+            setComments(commentsData); 
+        }   
+        catch(error){
+            console.error("Error fetching data", error); 
         }
+    }; 
+
+    useEffect(() => {
         fetchComments(); 
     },[ticketId]);
 
     const handleChange = (e) => {
         setComment(e.target.value); 
     };
+
+    const fileInputRef = useRef(null);
+    const handleButtonClick = () => {
+        fileInputRef.current.click(); 
+    }; 
+
+    const [fileInput, setFileInput] = useState(null); 
+    const [hasFileError,setHasFileError] = useState(false); 
+    const [fileErrorMessage, setFileErrorMessage] = useState("");
+    const fileTypes = new Set([
+        'image/jpeg', 
+        'image/png',  
+        'image/bmp',
+        'video/mp4',
+        'video/quicktime',
+      ]);
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0]; 
+        const maxSize = 50 * 1024 * 1024; //50MB
+        let errorMessage = ""; 
+        let allowedFiles = true; 
+    
+        if (!fileTypes.has(file.type)) {
+            allowedFiles = false; 
+            errorMessage = "Only .jpg, .jpeg, .png, .bmp, .mp4, .mov files are allowed."; 
+        }
+
+        if (file.size > maxSize) {
+            allowedFiles = false; 
+            errorMessage = "The maximum file size allowed is 50MB per file."; 
+        }
+
+        if (!allowedFiles) {
+          setHasFileError(true);
+          setFileErrorMessage(errorMessage);
+          setFileInput(null);
+          event.target.value = '';
+        }
+        else {
+          setHasFileError(false); 
+          setFileErrorMessage(""); 
+          setFileInput(file);
+        }
+      };
 
     const handleCommentSubmit = async(e) => {
         e.preventDefault(); 
@@ -47,11 +94,23 @@ function Comment({ticketId}) {
             formData.append("ticketId", ticketId);
             formData.append("commentText", comment); 
 
-            const response = await axiosInstance.post('comments', formData);
+            if (fileInput) {
+                formData.append("fileInput", fileInput); 
+            }
+
+            const response = await axiosInstance.post('comments', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }
+            });
               console.log("passed data:", response.data); 
               toast.success("Your comment has been submitted successfully.");
               setComment(""); 
-              setComments((comments) => [response.data.data, ...comments]);
+              setFileInput(null);
+              if (fileInputRef.current) {
+                fileInputRef.current.value = ''; 
+            }
+              fetchComments(); 
         }
         catch(error) {
             console.error("Error posting data", error); 
@@ -141,7 +200,7 @@ function Comment({ticketId}) {
                     <label htmlFor="comment" className="sr-only">Your comment</label>
                     <textarea 
                         id="comment" 
-                        rows="4" 
+                        rows="4"
                         className="w-full px-2 text-sm text-gray-900 bg-white border-0" 
                         placeholder={`Comment as ${user?.first_name}`}
                         required 
@@ -150,17 +209,14 @@ function Comment({ticketId}) {
                     </textarea>
                 </div>
                 <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200">
-                    <div>
-                        <button type="button" className="inline-flex justify-center items-center p-2 text-gray-500 rounded-sm cursor-pointer hover:text-gray-900 hover:bg-gray-100">
-                            <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 20">
-                                    <path stroke="currentColor" strokeLinejoin="round" strokeWidth="2" d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6"/>
-                            </svg>
-                        </button>
-                        <button type="button" className="inline-flex justify-center items-center p-2 text-gray-500 rounded-sm cursor-pointer hover:text-gray-900 hover:bg-gray-100">
+                    <div className="flex flex-row items-center">
+                        <button type="button" className="inline-flex justify-center items-center p-2 text-gray-500 rounded-sm cursor-pointer hover:text-gray-900 hover:bg-gray-100" onClick={handleButtonClick}> 
                             <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
                                     <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z"/>
                             </svg>
                         </button>
+                        {fileInput ? <p className="text-xs">{fileInput.name}</p> : <p className="text-xs">No file chosen</p>}
+                        <input ref={fileInputRef} id="attachment" name="attachment" type="file" className="hidden" accept=".jpg, .jpeg, .png, .bmp, .mp4, .mov" onChange={handleFileChange}/>
                     </div>
                     <div className="flex ps-0 space-x-1 rtl:space-x-reverse sm:ps-2">
                         <button 
@@ -174,6 +230,7 @@ function Comment({ticketId}) {
                 </div>
             </div>
             {isCommentValid && (<p className="text-xs text-red-500 -mt-2">The comment field must contain at least three characters.</p>)}
+            {hasFileError && <p className="text-xs text-red-500">{fileErrorMessage}</p>}
         </form>
         
         {comments.length > 0 && 
@@ -200,6 +257,27 @@ function Comment({ticketId}) {
                     }
                 </footer>
                 <p className="text-sm text-gray-500">{comment.comment}</p>
+                {comment?.attachments && comment?.attachments[0] && (
+                    <div className="mt-2">
+                        {comment?.attachments[0]?.file_name.endsWith('.mp4') || comment?.attachments[0]?.file_name.endsWith('.mov') ? 
+                        (
+                            <video
+                            src={`http://127.0.0.1:8000${comment?.attachments[0]?.file_path}`}
+                            width="200px"
+                            controls
+                            type="video/mp4"
+                            />
+                        ) : (
+                            <ModalImage
+                            small={`http://127.0.0.1:8000${comment?.attachments[0]?.file_path}`}
+                            large={`http://127.0.0.1:8000${comment?.attachments[0]?.file_path}`}
+                            className="w-32 h-20 rounded-sm"
+                            alt={comment?.attachments[0]?.file_name}
+                            />
+                        )
+                        }
+                    </div>
+                    )}
             </article>
         )}
         </div>
