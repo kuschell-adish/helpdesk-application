@@ -25,4 +25,8 @@ class Comment extends Model
         return $this->belongsTo(Ticket::class, 'ticket_id');
     }
 
+    public function attachments () {
+        return $this->hasMany(Attachment::class, 'comment_id', 'id');
+    }
+
 }

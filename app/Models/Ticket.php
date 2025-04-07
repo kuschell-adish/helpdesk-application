@@ -51,10 +51,10 @@ class Ticket extends Model
         return $this->hasMany(Attachment::class, 'ticket_id', 'id');
     }
 
-    // public function comments()
-    // {
-    //     return $this->hasMany(Comment::class, 'ticket_id', 'id')->orderBy('updated_at', 'desc');
-    // }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'ticket_id', 'id')->orderBy('updated_at', 'desc');
+    }
 
     public function status () {
         return $this->belongsTo(Status::class, 'status_id');
