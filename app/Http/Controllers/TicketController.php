@@ -54,8 +54,8 @@ class TicketController extends Controller
             'selectedPriority' => 'required|integer|exists:priorities,id',
             'titleInput' => 'required|string|min:10',
             'descriptionInput' => 'required|string|min:10',
-            // 'fileNames' => 'nullable|array|max:5',
-            // 'filesInput.*' => 'file|mimes:jpeg,jpg,png,bmp,mp4,mov,doc,docx,pdf|max:50000'
+            'fileNames' => 'nullable|array|max:5',
+            'filesInput.*' => 'file|mimes:jpeg,jpg,png,bmp,mp4,mov,doc,docx,pdf|max:50000'
         ]);
 
         $newTicket = Ticket::create([
