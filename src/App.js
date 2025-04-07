@@ -8,12 +8,14 @@ import Dashboard from './pages/Dashboard';
 import FileTicket from './pages/FileTicket';
 import TicketList from './pages/Tickets/TicketList';
 import TicketDetail from './pages/Tickets/TicketDetail';
+import AssignedTicket from './pages/AssignedTicket';
 import ArticleList from './pages/Articles/ArticleList';
 import ArticleDetail from './pages/Articles/ArticleDetail';
 import Profile from './pages/Profile';
 
 import { UserProvider } from './context/UserContext';
 import { useEffect } from 'react';
+
 function App() {
   const navigate = useNavigate();
 
@@ -33,6 +35,7 @@ function App() {
             {/* tickets */}
             <Route path="/tickets" element={<PrivateRoute element={<TicketList />} />} />
             <Route path="/tickets/:id" element={<PrivateRoute element={< TicketDetail/>} />} />
+            <Route path="/assigned/tickets" element={<PrivateRoute element={<AssignedTicket />} />} />
             {/* articles */}
             <Route path="/articles" element={<PrivateRoute element={<ArticleList />} />} />
             <Route path="/articles/:id" element={<PrivateRoute element={<ArticleDetail />} />} />

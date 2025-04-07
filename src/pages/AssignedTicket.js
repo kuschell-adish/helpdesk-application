@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import Navbar from '../../components/Navbar'
-import Sidebar from '../../components/Sidebar'
-import TicketTable from '../../components/TicketTable'
-import Searchbar from '../../components/Searchbar';
-import Filter from '../../components/Filter';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar'
+import TicketTable from '../components/TicketTable'
+import Searchbar from '../components/Searchbar';
+import Filter from '../components/Filter';
 
-import axiosInstance from '../../utils/axiosInstance';
-import { useUser } from '../../context/UserContext';
+import axiosInstance from '../utils/axiosInstance';
+import { useUser } from '../context/UserContext';
 
 import { IoDocumentsOutline } from "react-icons/io5";
 
-function TicketList() {
+function AssignedTicket() {
   const { user } = useUser(); 
   const [searchValue, setSearchValue] = useState("");
   const [newTickets, setNewTickets] = useState([]); 
@@ -39,8 +39,8 @@ function TicketList() {
     document.title = "adish HAP | My Tickets"
     const fetchTickets = async () => {
       try {
-        const response = await axiosInstance.get('/user-tickets', {
-          params: {userId: user.id}
+        const response = await axiosInstance.get('/admin-tickets', {
+          params: {adminId: user.id}
         });
         setNewTickets(response.data.tickets || []); 
       } catch (error) {
@@ -50,8 +50,6 @@ function TicketList() {
     fetchTickets(); 
   },[user?.id]); 
 
-  console.log(newTickets); 
-
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -60,9 +58,9 @@ function TicketList() {
             <div className="flex-none md:w-20 lg:w-28">
                 <Sidebar />
             </div>
-              <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
-                <p className="text-sm font-semibold">My Filed Tickets</p>
-                {newTickets.length > 0 ? (
+            <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
+              <p className="text-sm font-semibold">My Assigned Tickets</p>
+              {newTickets.length > 0 ? (
                 <>
                   <Searchbar 
                   name="search"
@@ -80,13 +78,13 @@ function TicketList() {
                 ) : (
                   <div className="flex flex-col items-center justify-center mt-5 gap-2 p-10">
                     <IoDocumentsOutline className="text-3xl" />
-                    <p className="text-sm"> No filed tickets yet</p>
+                    <p className="text-sm"> No assigned tickets yet</p>
                   </div>
                 )}
-              </div> 
+            </div>
         </div>
     </div>
   )
 }
 
-export default TicketList
+export default AssignedTicket
