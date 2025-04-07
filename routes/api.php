@@ -27,6 +27,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('tickets', TicketController::class)->only([
     'index', 'create', 'store', 'show', 'update'
 ]);
+Route::get('/user-tickets', [TicketController::class, 'userTickets']); 
+Route::get('/admin-tickets', [TicketController::class, 'adminTickets']); 
 
 Route::resource('articles', ArticleController::class)->only([
     'index', 'create', 'store', 'show', 'update'

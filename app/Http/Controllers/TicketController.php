@@ -26,6 +26,39 @@ class TicketController extends Controller
             'departments' => $departments]); 
     }
 
+    public function userTickets (Request $request) {
+        $userId = $request->query('userId'); 
+        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'employee')
+                ->where('user_id', $userId)
+                ->orderBy('id', 'desc')
+                ->get();
+        
+        //get adish depts
+        $departments = Department::where('company_id', 1)
+        ->get();
+
+        return response()->json([
+            'tickets' => $tickets, 
+            'departments' => $departments]); 
+    }
+
+    public function adminTickets (Request $request) {
+        $adminId = $request->query('adminId'); 
+        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'employee')
+                ->where('employee_id', $adminId)
+                ->orderBy('id', 'desc')
+                ->get();
+        
+        //get adish depts
+        $departments = Department::where('company_id', 1)
+        ->get();
+
+        return response()->json([
+            'tickets' => $tickets, 
+            'departments' => $departments]); 
+    }
+
+
     public function create () {
         //get adish depts
         $departments = Department::where('company_id', 1)
@@ -90,4 +123,5 @@ class TicketController extends Controller
 
         return response()->json(['ticket' => $ticket]); 
     }
+    
 }
