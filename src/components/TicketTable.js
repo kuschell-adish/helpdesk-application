@@ -3,12 +3,8 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
-import { useUser } from '../context/UserContext'; 
-
 function TicketTable({propTickets, filtersValue, searchValue}) {
-  const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState ([]); 
-  const { user } = useUser(); 
 
   const statusClasses = (category) => {
     switch(category) {
@@ -39,19 +35,6 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
   } 
 
   useEffect(() => {
-    if (propTickets && propTickets.length > 0) {
-      const userTickets = propTickets.filter(ticket => ticket.user_id === user?.id); 
-      setTickets(userTickets);  
-    } else {
-      const storedTickets = localStorage.getItem('tickets');
-      if (storedTickets) {
-        setTickets(JSON.parse(storedTickets));
-      } 
-    }
-  }, [user?.id, propTickets]);
-
-  
-  useEffect(() => {
     const statusMap = {
       new: 1,    
       inProgress: 2,
@@ -69,10 +52,10 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
     const priorityFilterActive = Object.keys(priorityMap).some(filterKey => filtersValue[filterKey]); 
     const allStatusActive = filtersValue.allStatus;
     const allPriorityActive = filtersValue.allPriority; 
-    let result = tickets;
+    let result = propTickets;
   
     if (statusFilterActive || priorityFilterActive || allStatusActive || allPriorityActive) {
-      result = tickets.filter(ticket => {
+      result = propTickets.filter(ticket => {
         const matchesSearch = ticket.title.toLowerCase().includes(searchValue.toLowerCase());
 
         const matchesStatus = allStatusActive || !statusFilterActive ||  Object.keys(statusMap).some(filterKey => {
@@ -92,10 +75,10 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
         return matchesSearch && matchesStatus && matchesPriority;
       });
     } else {
-      result = tickets.filter(ticket => ticket.title.toLowerCase().includes(searchValue.toLowerCase()));
+      result = propTickets.filter(ticket => ticket.title.toLowerCase().includes(searchValue.toLowerCase()));
     }
     setFilteredTickets(result);
-  }, [searchValue, filtersValue, tickets]);
+  }, [searchValue, filtersValue, propTickets]);
   
   return (
     <div>
