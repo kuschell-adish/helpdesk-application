@@ -29,6 +29,7 @@ function FileTicket() {
   const [descriptionInput, setDescriptionInput] = useState(""); 
   const [isChecked, setIsChecked] = useState(false); 
   const [filesInput, setFilesInput] = useState([]);
+  const [previews, setPreviews] = useState([]);
 
   const quillRef = useRef(null);
   const { user } = useUser(); 
@@ -64,10 +65,6 @@ function FileTicket() {
       return newChecked; 
     });
   };
-  
-
-  console.log("ischecked?", isChecked);
-  console.log("employee", selectedEmployee); 
 
   const [hasFileError,setHasFileError] = useState(false); 
   const [fileErrorMessage, setFileErrorMessage] = useState("");
@@ -113,6 +110,7 @@ function FileTicket() {
       setHasFileError(true);
       setFileErrorMessage(errorMessage);
       setFilesInput([]); 
+      setPreviews([]); 
       event.target.value = '';
     }
     else {
