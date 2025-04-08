@@ -12,16 +12,15 @@ function Attachment({ticket}) {
     <div className="flex flex-col text-sm px-2 mb-7">
         <p className="font-medium">Attachments</p>
         {ticket.attachments && ticket.attachments.length > 0 ? (
-             <div className="grid grid-cols-2 gap-x-24 py-3">
+             <div className="grid grid-cols-2 mt-2">
                 {ticket.attachments.map((attachment) => (
                     <div className="flex flex-row gap-x-2 px-2 pb-3" key={attachment.file_name}>
                         {attachment.file_name.endsWith('.mp4') || attachment.file_name.endsWith('.mov') ? 
                         (
                            <video
                                 src={`http://127.0.0.1:8000${attachment.file_path}`}
-                                width="200px"
                                 controls
-                                type="video/mp4"
+                                className="w-32 h-32 object-cover rounded-sm"
                             />
                         ) : attachment.file_name.endsWith('.doc') || attachment.file_name.endsWith('.docx') || attachment.file_name.endsWith('.pdf') ? (
                             <a href={`http://127.0.0.1:8000${attachment.file_path}`} target="_blank" rel="noopener noreferrer">
@@ -31,7 +30,7 @@ function Attachment({ticket}) {
                             <ModalImage
                                 small={`http://127.0.0.1:8000${attachment.file_path}`}
                                 large={`http://127.0.0.1:8000${attachment.file_path}`}
-                                className="w-32 h-20 rounded-sm"
+                                className="w-32 h-32 object-cover rounded-sm"
                                 alt={attachment.file_name}
                             />
                         )}
@@ -45,7 +44,7 @@ function Attachment({ticket}) {
             ) : (
                 <div className="flex flex-col items-center justify-center ">
                     <FaRegImages className="w-32 h-32 text-gray-300"/>
-                    <p className="text-sm italic">No attached files</p>
+                    <p className="text-sm">No attached files</p>
                 </div>
             )}
     </div>

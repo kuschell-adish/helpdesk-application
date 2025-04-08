@@ -46,6 +46,7 @@ function Comment({ticketId}) {
     }; 
 
     const [fileInput, setFileInput] = useState(null); 
+    const [preview, setPreview] = useState(null); 
     const [hasFileError,setHasFileError] = useState(false); 
     const [fileErrorMessage, setFileErrorMessage] = useState("");
     const fileTypes = new Set([
@@ -75,15 +76,29 @@ function Comment({ticketId}) {
         if (!allowedFiles) {
           setHasFileError(true);
           setFileErrorMessage(errorMessage);
-          setFileInput(null);
           event.target.value = '';
         }
         else {
           setHasFileError(false); 
           setFileErrorMessage(""); 
           setFileInput(file);
+        
+          if (file.type.startsWith('image/')) {
+            const objectURL = URL.createObjectURL(file);
+            setPreview({ file, preview: objectURL, type: 'image' });
+          }
+          else {
+            const objectURL = URL.createObjectURL(file);
+            setPreview({ file, preview: objectURL, type: 'video' });
+          }
+
         }
       };
+
+      const removePreview = () => {
+        setPreview(null);
+        setFileInput(null); 
+      } 
 
     const handleCommentSubmit = async(e) => {
         e.preventDefault(); 
@@ -107,6 +122,7 @@ function Comment({ticketId}) {
               toast.success("Your comment has been submitted successfully.");
               setComment(""); 
               setFileInput(null);
+              setPreview(null);
               if (fileInputRef.current) {
                 fileInputRef.current.value = ''; 
             }
@@ -198,9 +214,29 @@ function Comment({ticketId}) {
             <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50">
                 <div className="px-4 py-2 bg-white rounded-t-lg">
                     <label htmlFor="comment" className="sr-only">Your comment</label>
+                    {preview && (
+                        <div className="w-40 relative rounded-lg py-4 px-6" title={preview.file.name}>
+                            <button title="Remove attachment" className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-800" onClick={() => removePreview()}>
+                                &times;
+                            </button>
+                            {preview.type === 'image' ? (
+                                <img 
+                                    src={preview.preview} 
+                                    alt={preview.file.name} 
+                                    className="w-full h-32 object-cover rounded-sm" 
+                                />
+                            ) : (
+                                <video 
+                                    src={preview.preview} 
+                                    controls
+                                    className="w-full h-32 object-cover rounded-sm"
+                                />
+                            )}
+                    </div>
+                    )}
                     <textarea 
                         id="comment" 
-                        rows="4"
+                        rows="3"
                         className="w-full px-2 text-sm text-gray-900 bg-white border-0" 
                         placeholder={`Comment as ${user?.first_name}`}
                         required 
@@ -225,7 +261,6 @@ function Comment({ticketId}) {
                             className={`inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-orange-500 hover:bg-orange-600 rounded-lg ${isSubmitDisabled() && 'opacity-60 cursor-not-allowed'}`}>
                             Post 
                         </button>
-                        
                     </div>
                 </div>
             </div>

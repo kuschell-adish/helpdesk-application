@@ -15,6 +15,8 @@ import Button from '../components/Button';
 import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext';
 
+import { IoDocumentTextOutline } from "react-icons/io5";
+
 function FileTicket() {
 
   const [departments, setDepartments] = useState([]); 
@@ -80,45 +82,54 @@ function FileTicket() {
   ]);
 
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
-    const maxSize = 50 * 1024 * 1024; //50MB
-    let errorMessage = ""; 
-    let allowedFiles = true; 
-
-    //error for attachments length 
-    if (files.length > 5) {
-      allowedFiles = false; 
-      errorMessage = "You can only upload a maximum of 5 attachments."; 
-    }
-    else {
-      //error for different file type
-      for (const file of files) {
+    const newFiles = Array.from(event.target.files);
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    let errorMessage = "";
+    let allowedFiles = true;
+  
+    if (newFiles.length + filesInput.length > 5) {
+      allowedFiles = false;
+      errorMessage = "You can only upload a maximum of 5 attachments.";
+    } else {
+      for (const file of newFiles) {
         if (!fileTypes.has(file.type)) {
-          allowedFiles = false; 
-          errorMessage = "Only .jpg, .jpeg, .png, .bmp, .mp4, .mov, .doc, .docx, .pdf files are allowed."; 
+          allowedFiles = false;
+          errorMessage = "Only .jpg, .jpeg, .png, .bmp, .mp4, .mov, .doc, .docx, .pdf files are allowed.";
           break;
         }
-        //file size error
         if (file.size > maxSize) {
-          allowedFiles = false; 
-          errorMessage = "The maximum file size allowed is 50MB per file."; 
+          allowedFiles = false;
+          errorMessage = "The maximum file size allowed is 50MB per file.";
           break;
         }
       }
     }
+  
     if (!allowedFiles) {
       setHasFileError(true);
       setFileErrorMessage(errorMessage);
-      setFilesInput([]); 
-      setPreviews([]); 
-      event.target.value = '';
-    }
-    else {
-      setHasFileError(false); 
+      event.target.value = ''; 
+    } else {
+      setHasFileError(false);
       setFileErrorMessage(""); 
-      setFilesInput(files);
+      setFilesInput((prevFiles) => [...prevFiles, ...newFiles]); 
+
+      const newPreviews = newFiles.map((file) => {
+        if (file.type.startsWith('image/')) {
+          const objectURL = URL.createObjectURL(file);
+          return { file, preview: objectURL, type: 'image' };
+        }
+        else if (file.type.startsWith('video/')) {
+          const objectURL = URL.createObjectURL(file);
+          return { file, preview: objectURL, type: 'video' };
+        }
+        return { file, preview: null, type: 'other' };
+      });
+
+      setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
     }
-  }
+  };
+  
 
   const handleCancelClick = () => {
     setSelectedDepartment("");
@@ -127,6 +138,7 @@ function FileTicket() {
     setTitleInput("");
     setDescriptionInput("");
     setFilesInput([]); 
+    setPreviews([]);
   }
   
   const handleSubmitClick = async() => {
@@ -213,7 +225,13 @@ function FileTicket() {
     }
   },[selectedDepartment, employees]);
 
-  console.log("files", filesInput); 
+  const removePreview = (index) => {
+    const fileName = previews[index].file.name;
+    setPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
+    setFilesInput((prevFiles) =>
+      prevFiles.filter((file) => file.name !== fileName)
+    );
+  } 
 
 
   return (
@@ -312,15 +330,33 @@ function FileTicket() {
                     </div>
                     <input id="attachments" name="attachments" type="file" className="hidden" multiple accept=".jpg, .jpeg, .png, .bmp, .mp4, .mov, .doc, .docx, .pdf" onChange={handleFileChange}/>
                   </label>
-                  <ul className="text-sm mt-3">
-                    {filesInput.length > 0 ? (
-                      filesInput.map((file,index) => (
-                        <li className="text-blue-500" key={index}>{file.name}</li>
-                      ))
-                    ):
-                    (<li>No file chosen</li>)}
-                  </ul>
-                  {hasFileError && <p className="text-xs text-red-500">{fileErrorMessage}</p>}
+                  {filesInput.length === 0 && <p className="text-sm mt-2">No file chosen</p>}
+                  {hasFileError && <p className="mt-2 text-xs text-red-500">{fileErrorMessage}</p>}
+                  <div className="grid grid-cols-5 gap-4 mt-4">
+                  {previews.length > 0 && previews.map((preview, index) => (
+                    <div key={index} className="relative bg-gray-100 rounded-lg py-4 px-6" title={preview.file.name}>
+                      <button title="Remove attachment" className="absolute top-2 right-2 text-xl text-gray-600 hover:text-gray-800"  onClick={() => removePreview(index)}>
+                        &times;
+                      </button>
+                      <p className="text-xs text-orange-500 text-contain truncate w-full mb-2">{preview.file.name}</p>
+                      {preview.type === 'image' ? (
+                        <img 
+                            src={preview.preview} 
+                            alt={preview.file.name} 
+                            className="w-full h-32 object-cover rounded-sm" 
+                          />
+                      ) : preview.type === 'video' ? (
+                        <video 
+                            src={preview.preview} 
+                            controls
+                            className="w-full h-32 object-cover rounded-sm"
+                          />
+                      ) : (
+                        <IoDocumentTextOutline className="text-9xl"/>
+                      )}
+                  </div>
+                  ))}
+                </div>
                 </div> 
               </div>
               <div className="w-full flex justify-end">
