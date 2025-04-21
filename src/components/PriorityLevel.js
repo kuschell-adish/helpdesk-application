@@ -60,12 +60,13 @@ function PriorityLevel({seriesData}) {
         show: true,
         position: "bottom",
         fontFamily: "Inter, sans-serif",
-        formatter: function(seriesName, opts) {
-          let value = seriesData[opts.seriesIndex] * 100;
-          if (isNaN(value)) {
-            value = 0;
-          }
-          return `${seriesName}: ${(value/allTicketCount).toFixed(2)}%`; 
+        formatter: function (seriesName, opts) {
+          const value = seriesData[opts.seriesIndex] || 0;
+          const percentage = allTicketCount > 0
+            ? ((value / allTicketCount) * 100).toFixed(2)
+            : '0.00';
+        
+          return `${seriesName}: ${percentage}%`;
         }
       },
       yaxis: {

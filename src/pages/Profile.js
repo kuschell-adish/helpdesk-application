@@ -25,6 +25,7 @@ function Profile() {
       fetchAuthUser();
     },[]);
 
+    console.log('authUser:', authUser); 
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />

@@ -64,13 +64,14 @@ function TicketStatus({seriesData}) {
                 show: true,
                 position: "bottom",
                 fontFamily: "Inter, sans-serif",
-                formatter: function(seriesName, opts) {
-                  let value = seriesData[opts.seriesIndex];
-                  if (isNaN(value)) {
-                    value = 0;
+                formatter: function (seriesName, opts) {
+                    const value = seriesData[opts.seriesIndex] || 0;
+                    const percentage = allTicketCount > 0
+                      ? ((value / allTicketCount) * 100).toFixed(2)
+                      : '0.00';
+                  
+                    return `${seriesName}: ${percentage}%`;
                   }
-                return `${seriesName}: ${((value/allTicketCount) * 100).toFixed(2)}%`;
-                }
               },
             tooltip: {
                 enabled: true,
