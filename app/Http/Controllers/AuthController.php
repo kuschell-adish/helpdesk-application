@@ -22,8 +22,8 @@ class AuthController extends Controller
             ],401);
         }
 
-        $user = $request->user();
-        $user->load('company'); 
+        $user = Auth::user(); 
+        $user->load(['company', 'department']); 
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->plainTextToken;
 
@@ -36,7 +36,10 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        $user = Auth::user();
+        return response()->json([
+            'user' => $user
+        ]);
     }
 
     public function logout(Request $request)
