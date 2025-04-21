@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 
-function Input({label, type, name, value,placeholder, options, onChange, isDisabled, hasError, error}) {
+function Input({label, type, name, value,placeholder, options, onChange, isDisabled, hasError, error, addedStyles}) {
   const handleChange = (e) => {
     onChange(e.target.value);
   };
@@ -77,7 +77,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
           onChange={handleChange}
           disabled = {isDisabled}
           options = {options}
-          className={`mt-2 w-full p-2 text-sm rounded-sm ${isDisabled ? 'bg-gray-200 cursor-not-allowed' : 'border-[1px] border-black' }`}>
+          className={`mt-2 w-full p-2 text-sm rounded-sm ${isDisabled ? 'bg-gray-200 cursor-not-allowed' : 'border-[1px] border-black' } ${addedStyles}`}>
         </input>
         {hasError &&  <p className="text-xs text-red-500">{error}</p>}
       </div>

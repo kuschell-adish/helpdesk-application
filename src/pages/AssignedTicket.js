@@ -36,11 +36,14 @@ function AssignedTicket() {
   };
 
   useEffect(() => {
-    document.title = "adish HAP | My Tickets"
+    document.title = "adish HAP | Assigned Tickets"
     const fetchTickets = async () => {
       try {
         const response = await axiosInstance.get('/admin-tickets', {
-          params: {adminId: user.id}
+          params: {
+            adminId: user.id, 
+            deptId: user.department_id
+          }
         });
         setNewTickets(response.data.tickets || []); 
       } catch (error) {
@@ -48,7 +51,7 @@ function AssignedTicket() {
       } 
     };
     fetchTickets(); 
-  },[user?.id]); 
+  },[user?.id, user?.department_id]); 
 
 
   return (
