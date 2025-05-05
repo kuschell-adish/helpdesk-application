@@ -1,15 +1,13 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import Input from './Input';
 import Button from './Button';
 
-import { useUser } from '../context/UserContext'; 
+import { toast } from 'react-toastify';
+import axiosInstance from '../utils/axiosInstance';
 
 function UserProfile() {
-  const { user } = useUser(); 
   const [preview, setPreview] = useState("/default.png");
   const [hasFileError,setHasFileError] = useState(false); 
   const [errorMessage,setErrorMessage] = useState(""); 
@@ -25,7 +23,6 @@ function UserProfile() {
     return !profilePicture; 
   }
 
-  //to fix in file handling
   const handleFileChange = (event) => {
     const file = event.target.files[0]; 
     const maxSize = 2 * 1024 * 1024; //2mb 
@@ -47,7 +44,6 @@ function UserProfile() {
     if (!allowedFiles) {
       setHasFileError(true);
       setErrorMessage(errorMessage);
-      setProfilePicture();
       event.target.value = '';
     }
     else {
@@ -57,10 +53,51 @@ function UserProfile() {
       };
       fileReader.readAsDataURL(file);
       setHasFileError(false); 
-      setProfilePicture(file); 
       setErrorMessage(""); 
+      setProfilePicture(file); 
     }
   }
+
+  const [user, setUser] = useState(""); 
+  useEffect(() => {
+      const fetchAuthUser = async() => {
+        try {
+          const response = await axiosInstance.get('users');
+          const userData = response.data.user; 
+          setUser(userData); 
+        }
+        catch(error) {
+          console.error("Error fetching data", error);
+        }
+      }; 
+      fetchAuthUser();
+  },[]);
+
+  const handleButtonClick = async(e) => {
+    e.preventDefault(); 
+    try {
+        const formData = new FormData();
+
+        if (profilePicture) {
+          console.log("file selected:", profilePicture); 
+          formData.append("profilePicture", profilePicture); 
+        }
+
+        const response = await axiosInstance.put(`/users/${user?.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log("passed data:", response.data); 
+        toast.success("Your profile has been submitted successfully.");
+        setProfilePicture(""); 
+        setPreview("/default.png");
+    }
+    catch(error) {
+        console.error("Error posting data", error); 
+    }
+  }
+
 
   
   return (
@@ -68,9 +105,9 @@ function UserProfile() {
       <div className="flex flex-col items-center justify-center">
         <label htmlFor="profile_picture" className="text-sm font-medium">Profile Picture</label>
         <img id="profile_picture_preview" src={preview} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
-        <input type="file" name="profile_picture" id="profile_picture" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg, .tiff, .tif" onChange={handleFileChange}></input>
+        <input id="profilePicture" name="profilePicture" type="file" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg" onChange={handleFileChange}></input>
         <div className="flex flex-col mb-5 text-center">
-          <p className="text-xs text-gray-400 mt-1 mb-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
+          <p className="text-xs text-gray-400 mt-1 mb-1">Accepts formats such as JPEG and PNG and must not exceed into 2MB.</p>
           {hasFileError && <p className="text-xs text-red-500">{errorMessage}</p>}
         </div>
       </div>
@@ -125,6 +162,7 @@ function UserProfile() {
               label="Update"
               isPrimary={true}
               isDisabled={isButtonDisabled()}
+              onClick={handleButtonClick}
               />
           </div>
         </div>

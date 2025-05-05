@@ -6,26 +6,12 @@ import Sidebar from '../components/Sidebar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import axiosInstance from '../utils/axiosInstance';
-
 function Profile() {
-  const [authUser, setAuthUser] = useState(""); 
+
   useEffect(() => {
       document.title = 'adish HAP | My Profile';
-      const fetchAuthUser = async() => {
-        try {
-          const response = await axiosInstance.get('/auth/user');
-          const userData = response.data.user; 
-          setAuthUser(userData); 
-        }
-        catch(error) {
-          console.error("Error fetching data", error);
-        }
-      }; 
-      fetchAuthUser();
     },[]);
 
-    console.log('authUser:', authUser); 
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />

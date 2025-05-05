@@ -270,10 +270,10 @@ function FileTicket() {
 
                 <div className="flex flex-col">
                   <div className="flex flex-row items-center justify-between">
-                    <label for="employee" className="text-sm font-medium">Assign to Employee</label>
+                    <label htmlFor="employee" className="text-sm font-medium">Assign to Employee</label>
                     <div className="flex items-center gap-x-2">
                       <input type="checkbox" id="unassigned" name="unassigned" value="1" className="w-4 h-4 bg-gray-100 border-gray-300" checked={isChecked} onChange={handleCheckboxChange}></input>
-                      <label for="unassigned" className="text-sm font-medium">Leave Unassigned</label>
+                      <label htmlFor="unassigned" className="text-sm font-medium">Leave Unassigned</label>
                     </div>
                   </div>
                   <select name="employee" value ={selectedEmployee} className="mt-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" onChange={handleEmployeeChange} disabled={isChecked}>
@@ -306,17 +306,17 @@ function FileTicket() {
                 />
               </div>
               <div className="flex flex-col gap-y-1">
-                <div style={{ display: 'flex', flexDirection: 'column', height: '200px', padding: '0 0.5rem', marginBottom: '1.75rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', height: '200px', padding: '0 0.5rem', marginBottom: '1.75rem',  position: 'relative', }}>
                     <label htmlFor="description" className="text-sm font-medium mb-2" >Description</label>
                     <ReactQuill
                       ref={quillRef}
-                      style={{ flexGrow: 1, marginBottom: 15}}
+                      style={{ height: '200px'}}
                       readOnly={false}
                       value={descriptionInput}
                       onChange={handleDescriptionChange}
                     />
                 </div>
-                {hasDescriptionError() &&  <p className="text-xs text-red-500 ml-2">The description must at least be 10 characters.</p>}
+                {hasDescriptionError() &&  <p className="text-xs text-red-500 mt-4 ml-2">The description must at least be 10 characters.</p>}
                 <div className="flex flex-col px-2 mt-10">
                   <label htmlFor="attachments" className="text-sm font-medium">Attachments</label>
                   <label htmlFor="attachments" className="flex flex-col items-center justify-center w-full h-30 border-2 border-gray-300 border-dashed rounded-sm cursor-pointer mt-2">
