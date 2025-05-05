@@ -36,15 +36,18 @@ Route::resource('histories', HistoryController::class)->only([
     'show'
 ]);
 
-Route::resource('articles', ArticleController::class)->only([
-    'index', 'create', 'store', 'show', 'update'
+Route::middleware('auth:sanctum')->resource('articles', ArticleController::class)->only([
+    'index', 'store', 'show', 'update', 'destroy'
 ]);
 
 Route::resource('comments', CommentController::class)->only([
     'index', 'store', 'update', 'destroy'
 ]);
 
-Route::middleware('auth:sanctum')->put('/user/profile', [UserController::class, 'updateProfile']);
+Route::middleware('auth:sanctum')->resource('users', UserController::class)->only([
+    'index', 'update'
+]);
+
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
