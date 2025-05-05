@@ -322,11 +322,13 @@ function Comment({ticketId}) {
             onClose={handleEditClose} 
             onSubmit={handleEditSubmit}
             title="Edit your comment"
+            error="The comment field must contain at least three characters."
             submitText="Submit"
             cancelText="Cancel"
             isDanger={false}
             hasError={isEditingComentValid}
             disableValue={isEditDisabled()}
+            maxSize="max-w-lg"
         >
             <textarea
                 id="textarea"
@@ -345,6 +347,7 @@ function Comment({ticketId}) {
             submitText="Delete"
             cancelText="Cancel"
             isDanger={true}
+            maxSize="max-w-lg"
         />
     </div>
   )

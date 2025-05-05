@@ -12,6 +12,16 @@ code {
     monospace;
 }
 
+.ql-container {
+  max-height: 200px !important;
+  overflow-y: auto !important; 
+}
+
+.ql-editor {
+  max-height: 200px !important;  
+  overflow-y: auto !important;  
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
