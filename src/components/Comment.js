@@ -238,7 +238,7 @@ function Comment({ticketId}) {
                         id="comment" 
                         rows="3"
                         className="w-full px-2 text-sm text-gray-900 bg-white border-0" 
-                        placeholder={`Comment as ${user?.first_name}`}
+                        placeholder={`Comment as ${user?.name}`}
                         required 
                         value = {comment}
                         onChange={handleChange}>
@@ -280,9 +280,9 @@ function Comment({ticketId}) {
                                 src="/default.png"
                                 alt="Profile Picture"
                             />
-                            {comment?.user?.first_name} {comment?.user?.last_name}
+                            {comment?.user?.name}
                         </p>
-                        <p className="text-xs text-gray-600">{moment(comment.updated_at).format('MMMM D, YYYY  h:mm:ss A')}</p>
+                        <p className="text-xs text-gray-600">{moment(comment.updated_at).format('MMMM D, YYYY  h:mm A')}</p>
                     </div>
                     {user.id === comment?.user?.id &&
                     <div className="flex space-x-2 text-orange-500 justify-end">

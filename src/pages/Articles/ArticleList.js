@@ -118,7 +118,7 @@ function ArticleList() {
             <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
                 <div className="flex flex-row justify-between">
                     <p className="text-sm font-semibold">Knowledge Base</p>
-                    {user?.role_id !== 3 && (<p className="text-sm font-semibold text-orange-500 cursor-pointer hover:underline" onClick={() => handleShowCreate()}>+ Create New</p>)}
+                    {user?.role === 'admin' && (<p className="text-sm font-semibold text-orange-500 cursor-pointer hover:underline" onClick={() => handleShowCreate()}>+ Create New</p>)}
                 </div>
               <Searchbar 
               name="search"

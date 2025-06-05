@@ -23,6 +23,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
       (
         <div className="flex flex-col mb-7 gap-y-1">
           <select
+            id={name}
             name={name}
             value={value}
             onChange={handleChange}
@@ -45,6 +46,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
       ): type === 'password' ? (
         <div className="relative mb-3">
           <input 
+            id={name}
             type = {passwordType}
             name = {name}
             value = {value}
@@ -70,6 +72,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
       ( 
       <div className="flex flex-col mb-7 gap-y-1">
         <input 
+          id={name}
           type = {type}
           name = {name}
           value = {value}
@@ -77,7 +80,7 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
           onChange={handleChange}
           disabled = {isDisabled}
           options = {options}
-          className={`mt-2 w-full p-2 text-sm rounded-sm ${isDisabled ? 'bg-gray-200 cursor-not-allowed' : 'border-[1px] border-black' } ${addedStyles}`}>
+          className={`mt-2 w-full p-2 text-sm rounded-sm ${isDisabled ? 'bg-gray-200 cursor-not-allowed' : 'border-[1px] border-black'} ${addedStyles}`}>
         </input>
         {hasError &&  <p className="text-xs text-red-500">{error}</p>}
       </div>

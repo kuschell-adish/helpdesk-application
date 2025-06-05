@@ -1,6 +1,7 @@
 import React from 'react'
 import { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
 import Input from '../components/Input';
 import Navbar from '../components/Navbar';
@@ -58,15 +59,37 @@ function Login() {
       console.error("Error posting data", error); 
     }
   }
+  
 
   return (
     <div className="bg-gray-50 w-full min-h-screen flex flex-col items-center justify-center gap-y-10">
       <Navbar />
-      <div className="w-1/4 text-center">
+      <div className="w-full md:w-1/4 text-center">
+      <img src="home.svg" className='mb-2'></img>
         <p className="text-4xl font-bold">Empowering support, one ticket at a time with adish HAP.</p>
       </div>
-      <div className="w-1/4">
-      <form onSubmit={handleLoginClick}>
+      <div className="w-full md:w-1/4 flex items-center justify-center">
+        <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              const token = credentialResponse.credential; 
+              try {
+                const response = await axiosInstance.post('/auth/login', {token});        
+                if (response.status === 200) {
+                  setUserData(response.data.user);
+                  sessionStorage.setItem('token', response.data.accessToken); 
+
+                  navigate('/dashboard'); 
+                }
+              }
+              catch(error) {
+                console.error("error posting data", error); 
+              }
+            }}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+        />
+      {/* <form onSubmit={handleLoginClick}>
           <Input
             label="Work Email"
             type="email"
@@ -100,11 +123,11 @@ function Login() {
         <p className="text-sm text-center mt-5">
           No account yet? <a href="#" className="text-orange-500 underline hover:text-orange-500">Contact us</a>.
         </p>
-        </form>
+        </form> */}
       </div>
 </div>
 
   )
 }
 
-export default Login
+export default Login;

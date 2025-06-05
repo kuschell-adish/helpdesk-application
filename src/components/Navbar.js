@@ -16,11 +16,11 @@ function Navbar() {
         </a>
         {showProfile && (
           <div className="flex items-center gap-3">
-          <img src="/default.png" className="w-10 h-10 rounded-full" alt="Default Profile Picture" />
+          <img src={user?.profile_picture} className="w-10 h-10 rounded-full" alt="Default Profile Picture" />
           <a href="#">
             <div className="flex flex-col">
-              <p className="text-xs font-medium">{user?.first_name}  {user?.last_name}</p>
-              <p className="text-xs">{user?.position} at {user?.company?.name}</p>
+              <p className="text-xs font-medium">{user?.name}</p>
+              <p className="text-xs">Adish International Corporation</p>
             </div>
           </a>
         </div>

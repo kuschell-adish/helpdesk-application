@@ -41,7 +41,7 @@ function Sidebar() {
                     icon = {<IoDocumentsOutline />}
                     label= "My Tickets"
                 />
-                {user.role_id !== 3 && (
+                {user?.role === 'admin' && (
                 <NavItem 
                     link = "/assigned/tickets"
                     icon = {<IoDocumentsOutline />}

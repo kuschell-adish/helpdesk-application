@@ -15,7 +15,7 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
         case 'Resolved':
             return 'bg-green-500'; 
         case 'Closed':
-            return 'bg-blue-500';
+            return 'bg-red-500';
         default: 
             return '';
     }
@@ -114,9 +114,9 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
                         <tr key={ticket.id} className="border-b">
                             <td className="px-5 py-3">{moment(ticket.created_at).format('MMMM D, YYYY')}</td>
                             <td className="px-5 py-3">{ticket.title}</td>
-                            <td className="px-5 py-3">{ticket.department.name}</td>
-                            <td className={`px-5 py-3 ${!ticket?.employee && 'italic'}`}>
-                              {ticket?.employee ?  `${ticket.employee.first_name} ${ticket.employee.last_name}` : 'Unassigned' }
+                            <td className="px-5 py-3">{ticket.department.category}</td>
+                            <td className={`px-5 py-3 ${!ticket?.admin && 'italic'}`}>
+                              {ticket?.admin ?  `${ticket.admin.name}` : 'Unassigned' }
                             </td>
                             <td className="px-5 py-3">
                                 <span className={`inline-block rounded-full py-1.5 w-3/4 text-white text-center ${statusClasses(ticket.status.category)}`}>

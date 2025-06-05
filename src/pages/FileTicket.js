@@ -35,7 +35,7 @@ function FileTicket() {
 
   const quillRef = useRef(null);
   const { user } = useUser(); 
-  const userName = user ? `${user.first_name} ${user.last_name}` : ''; 
+  const userName = user ? `${user.name}` : ''; 
   const navigate = useNavigate(); 
 
   const handleTitleChange = (value) => {
@@ -233,7 +233,7 @@ function FileTicket() {
     );
   } 
 
-
+  console.log(selectedDepartment); 
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />
@@ -280,7 +280,7 @@ function FileTicket() {
                   <option value="">Select employee </option>
                     {filteredEmployees.map(employee => (
                       <option key ={employee.id} value={employee.id}>
-                        {employee.first_name + ' ' + employee.last_name}
+                        {employee.name}
                       </option>
                     ))}
                   </select>

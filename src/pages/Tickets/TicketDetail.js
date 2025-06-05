@@ -21,7 +21,7 @@ function TicketDetail() {
     const { id } = useParams();
     const navigate = useNavigate(); 
     const [ticket, setTicket] = useState("");
-    const employeeName = ticket.employee ? `${ticket?.employee?.first_name} ${ticket?.employee?.last_name}` : 'Unassigned'; 
+    const employeeName = ticket.admin ? `${ticket?.admin?.name}` : 'Unassigned'; 
 
     useEffect(() => {
         document.title = 'adish HAP | Ticket Detail'
@@ -43,18 +43,16 @@ function TicketDetail() {
             case 1:
                 return 'bg-yellow-500';
             case 2:
-                return 'bg-blue-500';
+                return 'bg-blue-600';
             case 3:
                 return 'bg-green-500';
             case 4:
-                return 'bg-red-500';
-          default:
-            return ''; 
+                return 'bg-red-500'; 
         }
     };
 
     //user access
-    const userAccess = user?.role_id === 3; 
+    const userAccess = user?.role === 'user';
 
     const [selectedDepartment, setSelectedDepartment] = useState("");
     const [selectedEmployee, setSelectedEmployee] = useState("");
@@ -91,8 +89,8 @@ function TicketDetail() {
         if (ticket?.department_id) {
             setSelectedDepartment(ticket.department_id);
         }
-        if (ticket?.employee_id) {
-            setSelectedEmployee(ticket?.employee_id);
+        if (ticket?.admin_id) {
+            setSelectedEmployee(ticket?.admin_id);
         }
         if (ticket?.priority_id) {
             setSelectedPriority(ticket?.priority_id);
@@ -100,7 +98,7 @@ function TicketDetail() {
         if (ticket?.status_id) {
             setSelectedStatus(ticket?.status_id);
         }
-      }, [ticket?.department_id, ticket?.employee_id, ticket?.priority_id, ticket?.status_id]);
+      }, [ticket?.department_id, ticket?.admin_id, ticket?.priority_id, ticket?.status_id]);
 
 
     const handleDepartmentChange = (value) => {
@@ -160,7 +158,7 @@ function TicketDetail() {
         }
       },[selectedDepartment, employees]);
 
-    console.log(selectedPriority); 
+      console.log('ticket:', ticket); 
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -188,14 +186,14 @@ function TicketDetail() {
                             label="Last Updated on"
                             type="text"
                             name="date"
-                            value={moment(ticket.updated_at).format('MMMM D, YYYY')}
+                            value={moment(ticket.updated_at).format('MMMM D, YYYY h:mm A')}
                             isDisabled={true}
                         />
                         <Input
                             label="Department Assigned"
                             type={userAccess ? "text" : "select"}
                             name="department"
-                            value={userAccess ? ticket?.department?.name : selectedDepartment}
+                            value={userAccess ? ticket?.department?.category : selectedDepartment}
                             options={departments}
                             onChange={handleDepartmentChange}
                             isDisabled={userAccess}
@@ -240,16 +238,18 @@ function TicketDetail() {
                 <Attachment 
                     ticket={ticket}
                 />
-                <div className="w-full flex justify-end">
-                    <div className="w-28 gap-x-2 mr-2">
-                    <Button 
-                        type="submit"
-                        label="Update"
-                        isPrimary={true}
-                        onClick={handleUpdateClick}
-                    />
+                {!userAccess  && (
+                    <div className="w-full flex justify-end">
+                        <div className="w-28 gap-x-2 mr-2">
+                        <Button 
+                            type="submit"
+                            label="Update"
+                            isPrimary={true}
+                            onClick={handleUpdateClick}
+                        />
+                        </div>
                     </div>
-              </div>
+                )}
     
             </div>
             <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
