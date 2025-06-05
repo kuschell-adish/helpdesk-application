@@ -16,13 +16,12 @@ use Illuminate\Support\Facades\Auth;
 class TicketController extends Controller
 {
     public function index () {
-        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'employee')
+        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
         ->orderBy('id', 'desc')
         ->get();
         
         //get adish depts
-        $departments = Department::where('company_id', 1)
-        ->get();
+        $departments = Department::all();
 
         return response()->json([
             'tickets' => $tickets, 
@@ -31,14 +30,13 @@ class TicketController extends Controller
 
     public function userTickets (Request $request) {
         $userId = $request->query('userId'); 
-        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'employee')
+        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
                 ->where('user_id', $userId)
                 ->orderBy('id', 'desc')
                 ->get();
         
         //get adish depts
-        $departments = Department::where('company_id', 1)
-        ->get();
+        $departments = Department::all();
 
         return response()->json([
             'tickets' => $tickets, 
@@ -49,11 +47,11 @@ class TicketController extends Controller
         $adminId = $request->query('adminId'); 
         $deptId = $request->query('deptId'); 
 
-        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'employee')
+        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
             ->where(function($query) use ($adminId, $deptId) {
-            $query->where('employee_id', $adminId)
+            $query->where('admin_id', $adminId)
                 ->orWhere(function($query) use ($deptId) {
-                    $query->whereNull('employee_id')
+                    $query->whereNull('admin_id')
                         ->where('department_id', $deptId);
                 });
         })
@@ -61,8 +59,7 @@ class TicketController extends Controller
         ->get();
         
         //get adish depts
-        $departments = Department::where('company_id', 1)
-        ->get();
+        $departments = Department::all();
 
         return response()->json([
             'tickets' => $tickets, 
@@ -72,13 +69,10 @@ class TicketController extends Controller
 
     public function create () {
         //get adish depts
-        $departments = Department::where('company_id', 1)
-        ->get();
+        $departments = Department::all();
 
         //get employees
-        $employees = User::where('company_id', 1)
-        ->where('type_id', 1)
-        ->get();
+        $employees = User::where('role', 'admin')->get();
 
         //get priorities
         $priorities = Priority::all(); 
@@ -109,7 +103,7 @@ class TicketController extends Controller
         $newTicket = Ticket::create([
             'user_id' => $validated['authUser'],
             'department_id' => $validated['selectedDepartment'],
-            'employee_id' => $validated['selectedEmployee'],
+            'admin_id' => $validated['selectedEmployee'],
             'priority_id' => $validated['selectedPriority'],
             'status_id' => 1, //newly created ticket
             'title' => $validated['titleInput'],
@@ -148,7 +142,7 @@ class TicketController extends Controller
     }
 
     public function show ($id) {
-        $ticket = Ticket::findOrFail($id)->load('priority', 'status', 'employee', 'user', 'department', 'attachments');
+        $ticket = Ticket::findOrFail($id)->load('priority', 'status', 'admin', 'user', 'department', 'attachments');
 
         return response()->json(['ticket' => $ticket]); 
     }

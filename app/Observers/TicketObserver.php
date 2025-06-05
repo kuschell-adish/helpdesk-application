@@ -14,7 +14,7 @@ class TicketObserver
     public function updating(Ticket $ticket)
     {
         $user = Auth::user();
-        $userFullName = $user ? $user->first_name . ' ' . $user->last_name : 'Unknown';
+        $userFullName = $user ? $user->name : 'Unknown';
 
         $changes = [];
 
@@ -48,14 +48,14 @@ class TicketObserver
 
         //employee assigned has changed
         if ($ticket->isDirty('employee_id')) {
-            $oldEmployeeId = $ticket->getOriginal('employee_id');
-            $newEmployeeId = $ticket->employee_id;
+            $oldEmployeeId = $ticket->getOriginal('admin_id');
+            $newEmployeeId = $ticket->admin_id;
 
             $oldEmployee = User::find($oldEmployeeId);
-            $oldEmployeeFullName = $oldEmployee ? $oldEmployee->first_name . ' ' . $oldEmployee->last_name : 'Unassigned';
+            $oldEmployeeFullName = $oldEmployee ? $oldEmployee->name : 'Unassigned';
 
             $newEmployee = User::find($newEmployeeId);
-            $newEmployeeFullName = $newEmployee ? $newEmployee->first_name . ' ' . $newEmployee->last_name : 'Unknown';
+            $newEmployeeFullName = $newEmployee ? $newEmployee->name : 'Unknown';
 
             $changes[] = "Ticket has been assigned to {$newEmployeeFullName} from {$oldEmployeeFullName} by {$userFullName}.";
         }

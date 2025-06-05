@@ -13,23 +13,17 @@ class Ticket extends Model
     protected $fillable = [
         'user_id',
         'department_id',
-        'employee_id',
+        'admin_id',
         'priority_id',
         'title',
         'description',
         'status_id',
         'is_admin_creation',
-        'admin_id'
     ];
 
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
-    }
-
-    public function employee () 
-    {
-        return $this->belongsTo(User::class, 'employee_id');
     }
 
     public function user () 
@@ -42,10 +36,10 @@ class Ticket extends Model
         return $this->belongsTo(Priority::class, 'priority_id');
     }
 
-    // public function histories()
-    // {
-    //     return $this->hasMany(History::class, 'ticket_id', 'id');
-    // }
+    public function histories()
+    {
+        return $this->hasMany(History::class, 'ticket_id', 'id');
+    }
     
     public function attachments () {
         return $this->hasMany(Attachment::class, 'ticket_id', 'id');
