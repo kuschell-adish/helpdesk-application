@@ -14,6 +14,7 @@ export const UserProvider = ({ children }) => {
       setUser(JSON.parse(savedUser)); 
     }
     setLoading(false);  
+    // localStorage.removeItem('user');
   }, []);
 
   const setUserData = (userData) => {
