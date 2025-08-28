@@ -18,18 +18,18 @@ function Attachment({ticket}) {
                         {attachment.file_name.endsWith('.mp4') || attachment.file_name.endsWith('.mov') ? 
                         (
                            <video
-                                src={`http://127.0.0.1:8000${attachment.file_path}`}
+                                src={attachment.file_path}
                                 controls
                                 className="w-32 h-32 object-cover rounded-sm"
                             />
                         ) : attachment.file_name.endsWith('.doc') || attachment.file_name.endsWith('.docx') || attachment.file_name.endsWith('.pdf') ? (
-                            <a href={`http://127.0.0.1:8000${attachment.file_path}`} target="_blank" rel="noopener noreferrer">
+                            <a href={attachment.file_path} target="_blank" rel="noopener noreferrer">
                                 <IoDocumentTextOutline className="text-8xl"/>
                             </a>
                         ) : (
                             <ModalImage
-                                small={`http://127.0.0.1:8000${attachment.file_path}`}
-                                large={`http://127.0.0.1:8000${attachment.file_path}`}
+                                small={attachment.file_path}
+                                large={attachment.file_path}
                                 className="w-32 h-32 object-cover rounded-sm"
                                 alt={attachment.file_name}
                             />

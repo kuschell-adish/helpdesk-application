@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 
 import PrivateRoute from './components/PrivateRoute';
@@ -14,21 +14,12 @@ import ArticleDetail from './pages/Articles/ArticleDetail';
 import Profile from './pages/Profile';
 
 import { UserProvider } from './context/UserContext';
-import { useEffect } from 'react';
 
 function App() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem('user'); 
-
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [navigate]);
   return (
     <UserProvider>
         <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
           <Route path="/ticket/create" element={<PrivateRoute element={<FileTicket />} />}/>

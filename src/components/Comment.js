@@ -277,7 +277,7 @@ function Comment({ticketId}) {
                         <p className="inline-flex items-center mr-3 text-sm text-gray-900 font-semibold">
                             <img
                                 className="mr-2 w-6 h-6 rounded-full"
-                                src="/default.png"
+                                src={comment?.user?.profile_picture}
                                 alt="Profile Picture"
                             />
                             {comment?.user?.name}
@@ -297,15 +297,15 @@ function Comment({ticketId}) {
                         {comment?.attachments[0]?.file_name.endsWith('.mp4') || comment?.attachments[0]?.file_name.endsWith('.mov') ? 
                         (
                             <video
-                            src={`http://127.0.0.1:8000${comment?.attachments[0]?.file_path}`}
+                            src={comment?.attachments[0]?.file_path}
                             width="200px"
                             controls
                             type="video/mp4"
                             />
                         ) : (
                             <ModalImage
-                            small={`http://127.0.0.1:8000${comment?.attachments[0]?.file_path}`}
-                            large={`http://127.0.0.1:8000${comment?.attachments[0]?.file_path}`}
+                            small={comment?.attachments[0]?.file_path}
+                            large={comment?.attachments[0]?.file_path}
                             className="w-32 h-20 rounded-sm"
                             alt={comment?.attachments[0]?.file_name}
                             />

@@ -8,13 +8,25 @@ import { GoQuestion } from "react-icons/go";
 import { CiUser } from "react-icons/ci";
 import { IoLogOutOutline } from "react-icons/io5";
 
+import axiosInstance from '../utils/axiosInstance';
+
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
     const [user, setUser] = useState(""); 
-    const handleLogout = () => {
-        sessionStorage.removeItem('token'); 
-        setUser(null); 
-    }
+    const navigate = useNavigate();
+    const handleLogout = async(e) => {
+        e.preventDefault();
+        try {
+        const response = await axiosInstance.post('/logout');          
+          localStorage.removeItem("user");       
+          console.log("logged out:", response.data); 
+          navigate('/login'); 
+        }
+        catch(error) {
+          console.error("Error posting data", error); 
+        }
+      }
 
     useEffect(() => {
         const authenticatedUser = localStorage.getItem('user');

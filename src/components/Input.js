@@ -58,19 +58,19 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
           { passwordVisible ? (
             <FaEye 
               onClick={handleEyeClick}
-              className="absolute top-1/3 mt-2.5 right-2 transform -translate-y-1/2 cursor-pointer"
+              className="absolute top-1/3 mt-3 right-2 transform -translate-y-1/2 cursor-pointer"
             />
             ) : (
             <FaEyeSlash
               onClick={handleEyeClick}
-              className="absolute top-1/3 mt-2.5 right-2 transform -translate-y-1/2 cursor-pointer"
+              className="absolute top-1/3 mt-3 right-2 transform -translate-y-1/2 cursor-pointer"
             />
           )}
           {hasError &&  <p className="absolute my-1 text-xs text-red-500">{error}</p>}
         </div>
       ) : 
       ( 
-      <div className="flex flex-col mb-7 gap-y-1">
+      <div className="flex flex-col mb-5 gap-y-1">
         <input 
           id={name}
           type = {type}
