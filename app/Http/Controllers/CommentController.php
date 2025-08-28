@@ -7,8 +7,18 @@ use App\Models\Comment;
 use App\Models\Attachment;
 use Illuminate\Support\Facades\Storage;
 
+use App\Services\ImageUploadService;
+
 class CommentController extends Controller
-{
+{   
+    protected $imageService;
+
+    public function __construct(ImageUploadService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
+
     public function index(Request $request)
     {
         $ticketId = $request->query('ticketId'); 
@@ -43,12 +53,16 @@ class CommentController extends Controller
         if ($request->hasFile('fileInput')) {
             $file = $request->file('fileInput');
             $originalFileName = $file->getClientOriginalName(); 
-            $path = $file->store('attachments', 'public'); 
+            $path = $this->imageService->upload(
+                $file,
+                'comments/', 
+                'comment_'
+            );
     
             $attachment = new Attachment();
             $attachment->comment_id = $newComment->id;
             $attachment->file_name = $originalFileName; 
-            $attachment->file_path = Storage::url($path); 
+            $attachment->file_path = $path;
             $attachment->save();
         }
 

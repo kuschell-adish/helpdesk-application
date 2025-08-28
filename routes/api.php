@@ -21,16 +21,13 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::middleware('auth:sanctum')->resource('tickets', TicketController::class)->only([
     'index', 'create', 'store', 'show', 'update'
 ]);
 
-Route::get('/user-tickets', [TicketController::class, 'userTickets']); 
-Route::get('/admin-tickets', [TicketController::class, 'adminTickets']); 
+Route::get('/user-tickets', [TicketController::class, 'userTickets']);
+Route::get('/admin-tickets', [TicketController::class, 'adminTickets']);
 
 Route::resource('histories', HistoryController::class)->only([
     'show'
@@ -50,10 +47,9 @@ Route::middleware('auth:sanctum')->resource('users', UserController::class)->onl
 
 
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('login', [AuthController::class, 'login']);
-
     Route::group(['middleware' => 'auth:sanctum'], function() {
-      Route::post('logout', [AuthController::class, 'logout']);
-      Route::get('user', [AuthController::class, 'user']);
+        // Route::post('login', [AuthController::class, 'login']);
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::get('user', [AuthController::class, 'user']);
     });
 });
