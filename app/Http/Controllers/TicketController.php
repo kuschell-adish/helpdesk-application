@@ -13,8 +13,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
+use App\Services\ImageUploadService;
+
 class TicketController extends Controller
 {
+    protected $imageService;
+
+    public function __construct(ImageUploadService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
     public function index () {
         $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
         ->orderBy('id', 'desc')
@@ -113,12 +122,16 @@ class TicketController extends Controller
         if ($request->hasFile('filesInput')) {
             foreach ($request->file('filesInput') as $file) {
                 $originalFileName = $file->getClientOriginalName(); 
-                $path = $file->store('attachments', 'public'); 
+                $filePath = $this->imageService->upload(
+                    $file,
+                    'tickets/', 
+                    'ticket_'
+                );
         
                 $attachment = new Attachment();
                 $attachment->ticket_id = $newTicket->id;
                 $attachment->file_name = $originalFileName; 
-                $attachment->file_path = Storage::url($path); 
+                $attachment->file_path = $filePath;
                 $attachment->save();
             }
         }
@@ -128,13 +141,13 @@ class TicketController extends Controller
         History::create([
             'ticket_id' => $newTicket->id,
             'user_id' => $user->id,
-            'description' => 'Ticket has been created by ' . $user->first_name . ' ' . $user->last_name . '.',
+            'description' => 'Ticket has been created by ' . $user->name . '.',
         ]);
 
         History::create([
             'ticket_id' => $newTicket->id,
             'user_id' => $user->id,
-            'description' => 'Ticket has set its status to New by ' . $user->first_name . ' ' . $user->last_name . '.',
+            'description' => 'Ticket has set its status to New by ' . $user->name . '.',
         ]);
 
         return response()->json(['message' => 'Data stored successfully', 'data' => $newTicket]);
