@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TicketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,9 @@ Route::middleware('web')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 });
+
+Route::middleware('auth')->resource('tickets', TicketController::class)->only([
+    'index', 'create', 'store', 'show', 'update'
+]);
+Route::get('/user-tickets', [TicketController::class, 'userTickets']);
+Route::get('/admin-tickets', [TicketController::class, 'adminTickets']);
