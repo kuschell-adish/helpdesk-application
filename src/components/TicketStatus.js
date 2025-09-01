@@ -5,28 +5,22 @@ import html2canvas from 'html2canvas';
 function TicketStatus({seriesData}) {
     const chartOptions = getRadialChartOptions(seriesData);
 
-    const StatusBox = ({ color, count, label, width }) => (
-        <div className={`${width === 'full' ? 'w-full' : 'w-24'} h-24 ${color} bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center `}>
-            <p className="text-white text-4xl">{count}</p>
-            <p>{label}</p>
+    const StatusBox = ({ color, count, label }) => (
+        <div className={`w-full ${color} bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center `}>
+            <p className="text-white text-2xl font-medium">{count}</p>
+            <p className="text-xs">{label}</p>
         </div>
     );
 
     const allTicketCount = seriesData.reduce((total, count) => total + count, 0);
 
     const ticketsStatuses = [
-        { color: 'bg-orange-500', count: allTicketCount, label: 'All Tickets', width: 'full' },
+        { color: 'bg-orange-500', count: allTicketCount, label: 'All Tickets' },
         { color: 'bg-yellow-500', count: seriesData[0], label: 'New' },
         { color: 'bg-blue-500', count: seriesData[1], label: 'In Progress' },
         { color: 'bg-green-500', count: seriesData[2], label: 'Resolved' },
         { color: 'bg-red-500', count: seriesData[3], label: 'Closed' }
     ];
-
-    const [firstRow, secondRow, thirdRow] = [
-        ticketsStatuses.slice(0,1),
-        ticketsStatuses.slice(1,3),
-        ticketsStatuses.slice(3)
-    ]; 
 
     function getRadialChartOptions(series) {
         return {
@@ -38,7 +32,7 @@ function TicketStatus({seriesData}) {
                 "#EF4444"
             ],
             chart: {
-                height: 380, 
+                height: 400, 
                 width: "100%",
                 type: "radialBar",
                 sparkline: {
@@ -106,7 +100,7 @@ function TicketStatus({seriesData}) {
     }; 
 
     return (
-        <div className="w-full h-[838px] bg-white p-4 rounded-lg shadow mb-5">
+        <div className="w-full h-screen bg-white p-4 rounded-lg shadow mb-5">
             <div className="flex flex-row justify-between">
                 <div className="flex flex-row items-center">
                     <p className="text-sm font-semibold">Tickets Statuses</p>
@@ -117,22 +111,10 @@ function TicketStatus({seriesData}) {
                     </svg>
                 </button>
             </div>
-            <div className="flex flex-col gap-y-3 mt-5">
-                <div className="flex flex-wrap gap-x-4">
-                    {firstRow.map((status, index) => (
-                        <StatusBox key={index} {...status} />
-                    ))}
-                </div>
-                <div className="flex flex-wrap gap-x-4 ml-2">
-                    {secondRow.map((status, index) => (
-                            <StatusBox key={index} {...status} />
-                    ))}
-                </div>
-                <div className="flex flex-wrap gap-x-4 ml-2">
-                    {thirdRow.map((status, index) => (
-                        <StatusBox key={index} {...status} />
-                    ))}
-                </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-5">
+                {ticketsStatuses.map((status, index) => (
+                    <StatusBox key={index} {...status} />
+                ))}
             </div>
             <ReactApexChart id="status" 
                 options={chartOptions}

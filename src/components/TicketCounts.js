@@ -118,10 +118,10 @@ function TicketCounts({seriesData}) {
                 </button>
             </div>
             <ReactApexChart id="count"
-                options={chartOptions}
-                series={chartOptions.series}
-                type="bar"
-                height={chartOptions.chart.height} 
+              options={chartOptions}
+              series={chartOptions.series}
+              type="bar"
+              height={chartOptions.chart.height} 
             />
         </div>
   )

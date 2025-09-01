@@ -9,11 +9,11 @@ import { CiUser } from "react-icons/ci";
 import { IoLogOutOutline } from "react-icons/io5";
 
 import axiosInstance from '../utils/axiosInstance';
-
 import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
     const [user, setUser] = useState(""); 
+    const [isOpen, setIsOpen] = useState(false); 
     const navigate = useNavigate();
     const handleLogout = async(e) => {
         e.preventDefault();
@@ -31,50 +31,64 @@ function Sidebar() {
     useEffect(() => {
         const authenticatedUser = localStorage.getItem('user');
         setUser(JSON.parse(authenticatedUser)); 
-    },[])
+    },[]);
+
+    console.log("isOpen", isOpen); 
     
   return (
-    <div>
-      <div className="fixed w-1/12 h-screen p-3 px-8 hidden md:block">
-        <div className="flex flex-col justify-around gap-10">
-            <div className="flex flex-col gap-y-2.5 items-center">
+    <div className="min-h-screen">
+      <div className={`${isOpen ? 'w-1/5 md:w-1/6' : 'w-1/20'} fixed top-0 left-0 h-screen bg-white shadow-xl p-3 px-5 z-10 transition-all duration-300 ease-in-out`}>
+        <div className="text-xl hover:text-orange-500 z-11">
+          <button onClick={() => setIsOpen(!isOpen)}>
+            <img src="./favicon.ico" className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="flex flex-col">
+            <div className="flex flex-col gap-y-2.5">
                 <NavItem 
                     link = "/dashboard"
                     icon = {<LuLayoutDashboard />}
                     label= "Dashboard"
+                    isOpen={isOpen}
                 />
                 <NavItem 
                     link = "/ticket/create"
                     icon = {<TiDocumentAdd />}
                     label= "File Ticket"
+                    isOpen={isOpen}
                 />
                 <NavItem 
                     link = "/tickets"
                     icon = {<IoDocumentsOutline />}
                     label= "My Tickets"
+                    isOpen={isOpen}
                 />
                 {user?.role === 'admin' && (
                 <NavItem 
                     link = "/assigned/tickets"
                     icon = {<IoDocumentsOutline />}
                     label= "Assigned Tickets"
+                    isOpen={isOpen}
                 />
                 )}
                 <NavItem 
                     link = "/articles"
                     icon = {<GoQuestion />}
                     label= "Knowledge Base"
+                    isOpen={isOpen}
                 />
                  <NavItem 
                     link = "/profile"
                     icon = {<CiUser />}
                     label= "My Profile"
+                    isOpen={isOpen}
                 />
                 <NavItem 
                     link = "/login"
                     icon = {<IoLogOutOutline />}
                     label= "Logout"
                     onClick={handleLogout}
+                    isOpen={isOpen}
                 />
             </div>
         </div>

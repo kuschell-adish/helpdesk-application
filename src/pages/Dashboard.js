@@ -1,7 +1,6 @@
 import React from 'react';
 import { useEffect, useState} from 'react';
 
-import Navbar from '../components/Navbar';
 import PriorityLevel from '../components/PriorityLevel';
 import Sidebar from '../components/Sidebar';
 import TicketCounts from '../components/TicketCounts';
@@ -9,6 +8,8 @@ import TicketStatus from '../components/TicketStatus';
 
 import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext'; 
+
+import Skeleton from '../components/Skeleton'; 
 
 function Dashboard() {
     const [newTicketCount, setNewTicketCount] = useState(0);
@@ -22,6 +23,8 @@ function Dashboard() {
 
     const [departmentData, setDepartmentData] = useState([]);
     const { user } = useUser(); 
+
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         document.title = 'adish HAP | Dashboard';
@@ -119,9 +122,11 @@ function Dashboard() {
               }
 
             }
+            setLoading(false);
         }
         catch (error) {
             console.error("Error fetching data", error); 
+            setLoading(false);
         }
         };
        if (user) {
@@ -132,32 +137,33 @@ function Dashboard() {
     const statusData = [newTicketCount, progressTicketCount, resolvedTicketCount, closedTicketCount];
     const priorityData = [lowTicketCount, mediumTicketCount, highTicketCount]; 
 
-    console.log("statusData:", statusData);
-    console.log("priorityData:", priorityData); 
-    console.log("departmmentData", departmentData); 
 
   return (
-    <div className="bg-gray-50">
-        <Navbar />
-        <div className="flex flex-col md:flex-row gap-x-10 pt-20">
-            <div className="flex-none md:w-20 lg:w-28">
-            <Sidebar />
+    <div className="w-full bg-gray-50 flex min-h-screen">
+       <div className="w-[4%]">
+        <Sidebar/>
+       </div>
+            <div className="flex-1 flex flex-col py-5 md:px-5 ">
+              <div className="flex flex-col md:flex-row gap-x-4">
+                  <div className="w-full md:w-1/3">
+                  {loading 
+                  ? <Skeleton />
+                  : <TicketStatus
+                      seriesData = {statusData} />
+                  }
+                  </div>
+                  <div className="w-full md:w-2/3 flex flex-col gap-y-4">
+                  {loading 
+                  ? <Skeleton />
+                  : <>
+                  <PriorityLevel
+                      seriesData = {priorityData} />
+                    <TicketCounts 
+                      seriesData={departmentData}/>
+                  </>}
+                  </div>
+              </div>
             </div>
-            <div className="flex-1 flex flex-col min-h-screen ">
-            <div className="flex flex-row gap-x-4">
-                <div className="w-1/5">
-                <TicketStatus
-                    seriesData = {statusData} />
-                </div>
-                <div className="w-[78%] flex flex-col gap-y-4">
-                <PriorityLevel
-                    seriesData = {priorityData} />
-                <TicketCounts 
-                    seriesData={departmentData}/>
-                </div>
-            </div>
-            </div>
-        </div>
     </div>
   )
 }
