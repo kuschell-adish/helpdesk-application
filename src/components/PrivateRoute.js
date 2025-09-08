@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import axiosInstance from '../utils/axiosInstance';
 
-import Loading from '../pages/Loading';
+import Loading from './Loading';
 
 const PrivateRoute = ({ element }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);

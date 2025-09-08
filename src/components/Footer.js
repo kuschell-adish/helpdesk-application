@@ -11,7 +11,7 @@ import { IoLogOutOutline } from "react-icons/io5";
 import axiosInstance from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
-function Sidebar() {
+function Footer() {
     const [user, setUser] = useState(""); 
     const [isOpen, setIsOpen] = useState(false); 
     const navigate = useNavigate();
@@ -34,15 +34,13 @@ function Sidebar() {
     },[]);
     
   return (
-    <div className="min-h-screen hidden md:block">
-      <div className={`${isOpen ? 'w-1/5 md:w-1/6' : 'w-1/20'} fixed top-0 left-0 h-screen bg-white shadow-xl p-3 px-5 z-10 transition-all duration-300 ease-in-out`}>
+    <div className="">
+      <div className={`fixed w-full h-10 bottom-0 left-0 bg-white border-t-2 border-gray-200 shadow-xl p-3 px-5 z-10 transition-all duration-300 ease-in-out`}>
         <div className="text-xl hover:text-orange-500 z-11">
-          <button onClick={() => setIsOpen(!isOpen)}>
-            <img src="/favicon.ico" className="w-5 h-5" />
-          </button>
+        {/* <img src="/favicon.ico" className="w-5 h-5" /> */}
         </div>
-        <div className="flex flex-col">
-            <div className="flex flex-col gap-y-2.5">
+        <div className="flex flex-row">
+            <div className="flex flex-row items-center justify-between">
                 <NavItem 
                     link = "/dashboard"
                     icon = {<LuLayoutDashboard />}
@@ -92,8 +90,7 @@ function Sidebar() {
         </div>
     </div>
 </div>
-
   )
 }
 
-export default Sidebar
+export default Footer

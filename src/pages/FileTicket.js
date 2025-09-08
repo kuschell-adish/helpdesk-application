@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Input from '../components/Input';
 import Button from '../components/Button';
@@ -237,14 +236,13 @@ function FileTicket() {
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />
-        <Navbar />
-        <div className="flex flex-col md:flex-row gap-x-10 pt-20">
-            <div className="flex-none md:w-20 lg:w-28">
-            <Sidebar />
-            </div>
-            <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
+        <div className="flex flex-col md:flex-row p-5">
+          <div className="w-[4%]">
+            <Sidebar/>
+          </div>
+            <div className="w-full bg-white p-5 rounded-lg shadow">
               <p className="text-sm font-semibold">File a Ticket</p>
-              <div className="grid grid-cols-2 gap-x-24 px-2 py-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 px-2 py-3">
                 <Input
                 label="Name"
                 type="text"
@@ -276,7 +274,7 @@ function FileTicket() {
                       <label htmlFor="unassigned" className="text-sm font-medium">Leave Unassigned</label>
                     </div>
                   </div>
-                  <select name="employee" value ={selectedEmployee} className="mt-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" onChange={handleEmployeeChange} disabled={isChecked}>
+                  <select name="employee" value ={selectedEmployee} className="mt-2 sm:mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm" onChange={handleEmployeeChange} disabled={isChecked}>
                   <option value="">Select employee </option>
                     {filteredEmployees.map(employee => (
                       <option key ={employee.id} value={employee.id}>
@@ -360,7 +358,7 @@ function FileTicket() {
                 </div> 
               </div>
               <div className="w-full flex justify-end">
-                <div className="w-1/6 flex flex-row gap-x-2 mr-2">
+                <div className="w-full md:w-1/4 lg:w-1/6 flex flex-row gap-x-2 mr-2">
                   <Button 
                   type="button"
                   label="Cancel"

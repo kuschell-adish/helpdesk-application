@@ -19,7 +19,7 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
         default: 
             return '';
     }
-  } 
+  }; 
 
   const priorityClasses = (category) => {
     switch(category) {
@@ -32,7 +32,7 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
         default: 
             return '';
     }
-  } 
+  }; 
 
   useEffect(() => {
     const statusMap = {
