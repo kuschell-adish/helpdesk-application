@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import Navbar from '../../components/Navbar'
 import Sidebar from '../../components/Sidebar'
 import TicketTable from '../../components/TicketTable'
 import Searchbar from '../../components/Searchbar';
 import Filter from '../../components/Filter';
+import Loading from '../../components/Loading';
 
 import axiosInstance from '../../utils/axiosInstance';
-import { useUser } from '../../context/UserContext';
 
 import { IoDocumentsOutline } from "react-icons/io5";
+import Skeleton from '../../components/Skeleton';
 
 function TicketList() {
-  const { user } = useUser(); 
+  const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState("");
   const [newTickets, setNewTickets] = useState([]); 
   const handleSearchChange = (value) => {
@@ -39,50 +39,55 @@ function TicketList() {
     document.title = "adish HAP | My Tickets"
     const fetchTickets = async () => {
       try {
-        const response = await axiosInstance.get('/user-tickets', {
-          params: {userId: user.id}
-        });
+        const response = await axiosInstance.get('/user-tickets');
         setNewTickets(response.data.tickets || []); 
       } catch (error) {
         console.error('Error fetching tickets:', error);
       } 
+      finally {
+        setLoading(false); 
+      }
     };
-    fetchTickets(); 
-  },[user?.id]); 
+    fetchTickets();
+  },[]); 
 
   console.log(newTickets); 
 
 
   return (
     <div className="bg-gray-50 min-h-screen">
-        <Navbar />
-        <div className="flex flex-col md:flex-row gap-x-10 pt-20">
-            <div className="flex-none md:w-20 lg:w-28">
-                <Sidebar />
+        <div className="flex flex-col md:flex-row p-5">
+          <div className="w-[4%]">
+              <Sidebar/>
             </div>
-              <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
+              <div className="w-full bg-white p-5 rounded-lg shadow">
                 <p className="text-sm font-semibold">My Filed Tickets</p>
-                {newTickets.length > 0 ? (
-                <>
-                  <Searchbar 
+                <Searchbar 
                   name="search"
                   placeholder="Type a title here"
                   value={searchValue}
                   onChange={handleSearchChange}
                   />
-                  <Filter onFilterChange={handleFilterChange} />
+                <Filter onFilterChange={handleFilterChange} />
+                {loading 
+                ? <Skeleton/>
+                : 
+                newTickets.length > 0 
+                ? (
                   <TicketTable 
                     propTickets={newTickets}
                     filtersValue={filtersValue} 
                     searchValue={searchValue} 
+                    loading={loading}
                   />
-                </>
-                ) : (
+                ) 
+                : (
                   <div className="flex flex-col items-center justify-center mt-5 gap-2 p-10">
                     <IoDocumentsOutline className="text-3xl" />
                     <p className="text-sm"> No filed tickets yet</p>
                   </div>
-                )}
+                )
+                }
               </div> 
         </div>
     </div>

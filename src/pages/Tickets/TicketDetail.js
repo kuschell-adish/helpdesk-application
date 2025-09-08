@@ -6,12 +6,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
 import Input from '../../components/Input';
 import Attachment from '../../components/Attachment';
 import TicketLogs from '../../components/TicketLogs';
 import Comment from '../../components/Comment';
 import Button from '../../components/Button';
+import Loading from '../../components/Loading';
 
 import axiosInstance from '../../utils/axiosInstance';
 import { useUser } from '../../context/UserContext';
@@ -22,6 +22,7 @@ function TicketDetail() {
     const navigate = useNavigate(); 
     const [ticket, setTicket] = useState("");
     const employeeName = ticket.admin ? `${ticket?.admin?.name}` : 'Unassigned'; 
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         document.title = 'adish HAP | Ticket Detail'
@@ -33,6 +34,9 @@ function TicketDetail() {
             }
             catch(error) {
                 console.error("Error fetching data", error); 
+            }
+            finally {
+                setLoading(false); 
             }
         };
         fetchTicket(); 
@@ -118,7 +122,6 @@ function TicketDetail() {
     }
 
     const handleUpdateClick = async() => {
-
         try {
             const payload = {
                 selectedDepartment,
@@ -163,13 +166,15 @@ function TicketDetail() {
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />
-        <Navbar />
-        <div className="flex flex-col md:flex-row gap-x-10 pt-20">
-            <div className="flex-none md:w-20 lg:w-28">
-            <Sidebar />
-            </div>
+        <div className="flex flex-col md:flex-row p-5">
+          <div className="w-[4%]">
+            <Sidebar/>
+          </div>
             <div className="flex flex-col w-full mr-3 mb-5 gap-5">
             <div className="w-full bg-white p-5 rounded-lg shadow">
+            {loading 
+                ? <Loading />
+                : <>
                 <div className="flex flex-row justify-between gap-x-5 py-3">
                     <div className="grid grid-cols-2 gap-x-12 px-2 w-3/4">
                         <Input
@@ -250,13 +255,16 @@ function TicketDetail() {
                         </div>
                     </div>
                 )}
-    
+            </>}
             </div>
-            <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
+            {loading 
+            ? <></>
+            :<div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
                 <Comment
                     ticketId = {ticket?.id}
                 />
             </div>
+            }
             </div>
         </div>
     </div>

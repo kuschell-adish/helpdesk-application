@@ -9,7 +9,7 @@ import TicketStatus from '../components/TicketStatus';
 import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext'; 
 
-import Skeleton from '../components/Skeleton'; 
+import Loading from '../components/Loading';
 
 function Dashboard() {
     const [newTicketCount, setNewTicketCount] = useState(0);
@@ -144,25 +144,22 @@ function Dashboard() {
         <Sidebar/>
        </div>
             <div className="flex-1 flex flex-col py-5 md:px-5 ">
+              {loading 
+              ? <Loading /> 
+              : 
               <div className="flex flex-col md:flex-row gap-x-4">
                   <div className="w-full md:w-1/3">
-                  {loading 
-                  ? <Skeleton />
-                  : <TicketStatus
+                    <TicketStatus
                       seriesData = {statusData} />
-                  }
                   </div>
                   <div className="w-full md:w-2/3 flex flex-col gap-y-4">
-                  {loading 
-                  ? <Skeleton />
-                  : <>
-                  <PriorityLevel
+                    <PriorityLevel
                       seriesData = {priorityData} />
                     <TicketCounts 
                       seriesData={departmentData}/>
-                  </>}
                   </div>
               </div>
+              }
             </div>
     </div>
   )
