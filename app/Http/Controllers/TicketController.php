@@ -28,33 +28,28 @@ class TicketController extends Controller
         $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
         ->orderBy('id', 'desc')
         ->get();
-        
+
         //get adish depts
         $departments = Department::all();
 
         return response()->json([
-            'tickets' => $tickets, 
-            'departments' => $departments]); 
+            'tickets' => $tickets,
+            'departments' => $departments]);
     }
 
     public function userTickets (Request $request) {
-        $userId = $request->query('userId'); 
+        $user = $request->user();
         $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
-                ->where('user_id', $userId)
+                ->where('user_id', $user->id)
                 ->orderBy('id', 'desc')
                 ->get();
-        
-        //get adish depts
-        $departments = Department::all();
 
-        return response()->json([
-            'tickets' => $tickets, 
-            'departments' => $departments]); 
+        return response()->json(['tickets' => $tickets]);
     }
 
     public function adminTickets (Request $request) {
-        $adminId = $request->query('adminId'); 
-        $deptId = $request->query('deptId'); 
+        $adminId = $request->query('adminId');
+        $deptId = $request->query('deptId');
 
         $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
             ->where(function($query) use ($adminId, $deptId) {
@@ -66,13 +61,13 @@ class TicketController extends Controller
         })
         ->orderBy('id', 'desc')
         ->get();
-        
+
         //get adish depts
         $departments = Department::all();
 
         return response()->json([
-            'tickets' => $tickets, 
-            'departments' => $departments]); 
+            'tickets' => $tickets,
+            'departments' => $departments]);
     }
 
 
@@ -84,15 +79,15 @@ class TicketController extends Controller
         $employees = User::where('role', 'admin')->get();
 
         //get priorities
-        $priorities = Priority::all(); 
+        $priorities = Priority::all();
 
         //get statuses
-        $statuses = Status::all(); 
+        $statuses = Status::all();
 
         return response()->json([
             'departments' => $departments,
-            'employees' => $employees, 
-            'priorities' => $priorities, 
+            'employees' => $employees,
+            'priorities' => $priorities,
             'statuses' => $statuses
         ]);
     }
@@ -117,20 +112,20 @@ class TicketController extends Controller
             'status_id' => 1, //newly created ticket
             'title' => $validated['titleInput'],
             'description' => $validated['descriptionInput'],
-        ]); 
+        ]);
 
         if ($request->hasFile('filesInput')) {
             foreach ($request->file('filesInput') as $file) {
-                $originalFileName = $file->getClientOriginalName(); 
+                $originalFileName = $file->getClientOriginalName();
                 $filePath = $this->imageService->upload(
                     $file,
-                    'tickets/', 
+                    'tickets/',
                     'ticket_'
                 );
-        
+
                 $attachment = new Attachment();
                 $attachment->ticket_id = $newTicket->id;
-                $attachment->file_name = $originalFileName; 
+                $attachment->file_name = $originalFileName;
                 $attachment->file_path = $filePath;
                 $attachment->save();
             }
@@ -157,13 +152,13 @@ class TicketController extends Controller
     public function show ($id) {
         $ticket = Ticket::findOrFail($id)->load('priority', 'status', 'admin', 'user', 'department', 'attachments');
 
-        return response()->json(['ticket' => $ticket]); 
+        return response()->json(['ticket' => $ticket]);
     }
 
     public function update (Request $request, Ticket $ticket) {
         $validated = $request->validate([
             'selectedDepartment' => 'required|integer|exists:departments,id',
-            'selectedEmployee' => 'required|integer|exists:users,id', 
+            'selectedEmployee' => 'required|integer|exists:users,id',
             'selectedPriority' => 'required|integer|exists:priorities,id',
             'selectedStatus' => 'required|integer|exists:statuses,id'
         ]);
@@ -176,7 +171,7 @@ class TicketController extends Controller
         ]);
 
         return response()->json(['message' => 'Data updated successfully', 'data' => $ticket]);
-    
+
     }
-    
+
 }

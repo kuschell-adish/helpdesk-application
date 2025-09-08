@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\HistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,5 +28,14 @@ Route::middleware('web')->group(function () {
 Route::middleware('auth')->resource('tickets', TicketController::class)->only([
     'index', 'create', 'store', 'show', 'update'
 ]);
+
 Route::get('/user-tickets', [TicketController::class, 'userTickets']);
 Route::get('/admin-tickets', [TicketController::class, 'adminTickets']);
+
+Route::resource('histories', HistoryController::class)->only([
+    'show'
+]);
+
+Route::resource('comments', CommentController::class)->only([
+    'index', 'store', 'update', 'destroy'
+]);
