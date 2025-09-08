@@ -15,7 +15,18 @@ return [
     |
     */
 
-    'paths' => ['sanctum/csrf-cookie', 'login', 'user', 'logout', 'login/google', 'tickets*'],
+    'paths' => [
+        'sanctum/csrf-cookie',
+        'login',
+        'user',
+        'logout',
+        'login/google',
+        'tickets*',
+        'histories*',
+        'comments*',
+        'admin-tickets',
+        'user-tickets'
+    ],
 
     'allowed_methods' => ['*'],
 

@@ -1,14 +1,9 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\HistoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,34 +17,10 @@ use App\Http\Controllers\AuthController;
 */
 
 
-Route::middleware('auth:sanctum')->resource('tickets', TicketController::class)->only([
-    'index', 'create', 'store', 'show', 'update'
-]);
-
-Route::get('/user-tickets', [TicketController::class, 'userTickets']);
-Route::get('/admin-tickets', [TicketController::class, 'adminTickets']);
-
-Route::resource('histories', HistoryController::class)->only([
-    'show'
-]);
-
 Route::middleware('auth:sanctum')->resource('articles', ArticleController::class)->only([
     'index', 'store', 'show', 'update', 'destroy'
-]);
-
-Route::resource('comments', CommentController::class)->only([
-    'index', 'store', 'update', 'destroy'
 ]);
 
 Route::middleware('auth:sanctum')->resource('users', UserController::class)->only([
     'index', 'update'
 ]);
-
-
-Route::group(['prefix' => 'auth'], function () {
-    Route::group(['middleware' => 'auth:sanctum'], function() {
-        // Route::post('login', [AuthController::class, 'login']);
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::get('user', [AuthController::class, 'user']);
-    });
-});
