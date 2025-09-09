@@ -11,7 +11,7 @@ import { IoTrashBinOutline } from "react-icons/io5";
 import Modal from './Modal'; 
 import ModalImage from "react-modal-image";
 
-function Comment({ticketId}) {
+function Comment({ticketComments}) {
     const { user } = useUser(); 
     const [comment, setComment] = useState([]);
     const [comments, setComments] = useState([]);
@@ -22,7 +22,7 @@ function Comment({ticketId}) {
     const fetchComments = async() => {
         try {
             const response = await axiosInstance.get('/comments', {
-                params: {ticketId}
+                params: {ticketId: ticketComments[0].ticket_id }
             })
             const commentsData = response.data.comments;
             setComments(commentsData); 
@@ -32,9 +32,13 @@ function Comment({ticketId}) {
         }
     }; 
 
+    const firstFetch = () => {
+        setComments(ticketComments); 
+    }
+
     useEffect(() => {
-        fetchComments(); 
-    },[ticketId]);
+       firstFetch(); 
+    },[ticketComments]);
 
     const handleChange = (e) => {
         setComment(e.target.value); 
@@ -93,12 +97,13 @@ function Comment({ticketId}) {
           }
 
         }
-      };
+    };
 
-      const removePreview = () => {
+    const removePreview = () => {
         setPreview(null);
         setFileInput(null); 
-      } 
+    } 
+
 
     const handleCommentSubmit = async(e) => {
         e.preventDefault(); 
@@ -106,7 +111,7 @@ function Comment({ticketId}) {
             const formData = new FormData();
 
             formData.append("userId", user?.id); 
-            formData.append("ticketId", ticketId);
+            formData.append("ticketId", ticketComments[0].ticket_id);
             formData.append("commentText", comment); 
 
             if (fileInput) {
@@ -270,21 +275,21 @@ function Comment({ticketId}) {
         
         {comments.length > 0 && 
         <div className="max-h-80 overflow-y-scroll mt-5">
-        {comments.map((comment) =>
-            <article className="p-6 text-base bg-white border-t border-gray-200">
+        {comments.map((comment, index) =>
+            <article key={index} className="p-6 text-base bg-white border-t border-gray-200">
                 <footer className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
                         <p className="inline-flex items-center mr-3 text-sm text-gray-900 font-semibold">
                             <img
                                 className="mr-2 w-6 h-6 rounded-full"
-                                src={comment?.user?.profile_picture}
+                                src={comment?.user?.profile_picture ? comment?.user?.profile_picture : '../default.png' }
                                 alt="Profile Picture"
                             />
                             {comment?.user?.name}
                         </p>
                         <p className="text-xs text-gray-600">{moment(comment.updated_at).format('MMMM D, YYYY  h:mm A')}</p>
                     </div>
-                    {user.id === comment?.user?.id &&
+                    {user.id === comment?.user_id &&
                     <div className="flex space-x-2 text-orange-500 justify-end">
                         <HiOutlinePencil className="w-5 h-5 cursor-pointer"  onClick={() => handleShowEdit(comment.id, comment.comment)} />
                         <IoTrashBinOutline className="w-5 h-5 cursor-pointer"onClick={() => handleShowDelete(comment.id)} />
