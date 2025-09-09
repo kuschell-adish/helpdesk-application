@@ -150,7 +150,7 @@ class TicketController extends Controller
     }
 
     public function show ($id) {
-        $ticket = Ticket::findOrFail($id)->load('priority', 'status', 'admin', 'user', 'department', 'attachments');
+        $ticket = Ticket::findOrFail($id)->load('priority', 'status', 'admin', 'user', 'department', 'attachments', 'histories', 'comments');
 
         return response()->json(['ticket' => $ticket]);
     }
