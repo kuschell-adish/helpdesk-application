@@ -161,7 +161,6 @@ function TicketDetail() {
         }
       },[selectedDepartment, employees]);
 
-      console.log('ticket:', ticket); 
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -230,7 +229,7 @@ function TicketDetail() {
                         />
                     </div>
                    <TicketLogs 
-                    ticketId={ticket?.id}
+                    ticketLogs={ticket?.histories}
                     />
                 </div>
                 <div className="flex flex-col text-sm px-2 mb-7 -mt-2">
@@ -261,7 +260,7 @@ function TicketDetail() {
             ? <></>
             :<div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
                 <Comment
-                    ticketId = {ticket?.id}
+                    ticketComments = {ticket?.comments}
                 />
             </div>
             }
