@@ -5,10 +5,12 @@ import Input from './Input';
 import Button from './Button';
 
 import { toast } from 'react-toastify';
+import { useUser } from '../context/UserContext';
 import axiosInstance from '../utils/axiosInstance';
 
 function UserProfile() {
-  const [preview, setPreview] = useState("/default.png");
+  const { user } = useUser(); 
+  const [preview, setPreview] = useState(user?.profile_picture ? user?.profile_picture : './default.png');
   const [hasFileError,setHasFileError] = useState(false); 
   const [errorMessage,setErrorMessage] = useState(""); 
   
@@ -58,65 +60,60 @@ function UserProfile() {
     }
   }
 
-  const [user, setUser] = useState(""); 
-  useEffect(() => {
-      const fetchAuthUser = async() => {
-        try {
-          const response = await axiosInstance.get('users');
-          const userData = response.data.user; 
-          setUser(userData); 
-        }
-        catch(error) {
-          console.error("Error fetching data", error);
-        }
-      }; 
-      fetchAuthUser();
-  },[]);
-
   const handleButtonClick = async(e) => {
     e.preventDefault(); 
     try {
         const formData = new FormData();
 
         if (profilePicture) {
-          console.log("file selected:", profilePicture); 
           formData.append("profilePicture", profilePicture); 
         }
 
-        const response = await axiosInstance.put(`/users/${user?.id}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
+        const response = await axiosInstance.post(`/update/profile`, formData);
         console.log("passed data:", response.data); 
         toast.success("Your profile has been submitted successfully.");
         setProfilePicture(""); 
-        setPreview("/default.png");
     }
     catch(error) {
         console.error("Error posting data", error); 
     }
   }
 
+  const handleChangePasswordClick = () => {
+    //to-do 
+  }
 
-  
   return (
-    <div>
-      <div className="flex flex-col items-center justify-center">
+    <div className="w-full flex flex-col justify-center items-center my-10 gap-10 md:flex-row">
+      <div className="w-1/2 flex flex-col items-center justify-center">
         <label htmlFor="profile_picture" className="text-sm font-medium">Profile Picture</label>
         <img id="profile_picture_preview" src={preview} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+        {user?.login_provider === 'manual' && 
+        <>
         <input id="profilePicture" name="profilePicture" type="file" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg" onChange={handleFileChange}></input>
         <div className="flex flex-col mb-5 text-center">
           <p className="text-xs text-gray-400 mt-1 mb-1">Accepts formats such as JPEG and PNG and must not exceed into 2MB.</p>
           {hasFileError && <p className="text-xs text-red-500">{errorMessage}</p>}
         </div>
+        <div className="w-full flex justify-end">
+          <div className="w-1/10 md:1/4 flex justify-end mr-2">
+            <Button 
+              type="submit"
+              label="Update"
+              isPrimary={true}
+              isDisabled={isButtonDisabled()}
+              onClick={handleButtonClick}
+              />
+          </div>
+        </div>
+        </>}
       </div>
-       <div className="grid grid-cols-2 gap-x-24 px-2 py-3">
+      <div className="w-1/2">
         <Input
-          label="First Name"
+          label="Name"
           type="text"
           name="first_name"
-          value={user?.first_name || ''}
+          value={user?.name || ''}
           isDisabled={true}
         />
         <Input
@@ -127,45 +124,29 @@ function UserProfile() {
           isDisabled={true}
         />
         <Input
-          label="Middle Name"
+          label="Department"
           type="text"
-          name="middle_name"
-          value={user?.middle_name}
+          name="department"
+          value={user?.department?.category || ''}
           isDisabled={true}
         />
         <Input
           label="Company"
           type="text"
           name="company"
-          value={user?.company?.name|| ''}
+          value="Adish International Corporation"
           isDisabled={true}
         />
-        <Input
-          label="Last Name"
-          type="text"
-          name="last_name"
-          value={user?.last_name || ''}
-          isDisabled={true}
-        />
-        <Input
-          label="Position"
-          type="text"
-          name="position"
-          value={user?.position || ''}
-          isDisabled={true}
-        />
-        </div>
-        <div className="w-full flex justify-end">
-          <div className="w-1/12 flex justify-end mr-2">
+        <div className="w-1/10 md:1/4 flex flex-col justify-end">
+          <p className="text-sm font-semibold">Change Password</p>
             <Button 
               type="submit"
-              label="Update"
-              isPrimary={true}
-              isDisabled={isButtonDisabled()}
-              onClick={handleButtonClick}
+              label="Generate Password Reset Link"
+              isPrimary={false}
+              onClick={handleChangePasswordClick}
               />
           </div>
-        </div>
+      </div>
     </div>
   )
 }
