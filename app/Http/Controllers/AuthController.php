@@ -26,7 +26,7 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $user->load(['company', 'department']);
+        $user->load('department');
         $request->session()->regenerate();
         return response()->json(['message' => 'authenticated', 'user' => $user]);
 
@@ -50,13 +50,14 @@ class AuthController extends Controller
                     'name' => $name,
                     'department_id' => 1, // default
                     'role' => 'user', // default
+                    'login_provider' => 'google', // default
                     'profile_picture' => $picture,
                 ]);
             }
 
             Auth::login($user);
             $request->session()->regenerate();
-            $user->load(['company', 'department']);
+            $user->load('department');
             return response()->json(['message' => 'authenticated', 'user' => $user]);
 
         } else {
