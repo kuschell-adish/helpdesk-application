@@ -22,8 +22,8 @@ return [
         'logout',
         'login/google',
         'tickets*',
-        'histories*',
         'comments*',
+        'update/profile',
         'admin-tickets',
         'user-tickets'
     ],

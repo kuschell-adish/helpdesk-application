@@ -5,44 +5,41 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-
-use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
-class UserController extends Controller
-{   
-    public function index (Request $request) {
+use App\Models\User;
 
-        $user = Auth::user();
-        $user->load(['company', 'department']); 
-        return response()->json([
-            'user' => $user
-        ]);
+use App\Services\ImageUploadService;
+
+class UserController extends Controller
+{
+    public function __construct(ImageUploadService $imageService)
+    {
+        $this->imageService = $imageService;
     }
 
-    public function update (Request $request, User $user) {
+    //cannot use put or patch in supabase storage
+    public function updateProfile (Request $request) {
+        $request->validate([
+            'profilePicture' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
+        ]);
 
-        // $validated = $request->validate([
-        //     'profilePicture' => 'nullable|image|mimes:jpeg,jpg,png|max:2048'
-        // ]); 
 
-        Log::info('Request received', ['request_data' => $request->all()]);
+        $user = Auth::user();
 
         if ($request->hasFile('profilePicture')) {
             $file = $request->file('profilePicture');
-
-            Log::info('Received profile picture', [
-                'file_name' => $file->getClientOriginalName(),
-                'file_size' => $file->getSize(),
-                'file_mime_type' => $file->getMimeType()
-            ]);
-            
-            $path = $file->store('profile_picture', 'public'); 
-            $user->profile_picture = Storage::url($path); 
+            $originalFileName = $file->getClientOriginalName();
+            $path = $this->imageService->upload(
+                $file,
+                'profiles/',
+                'profile_'
+            );
+            $user->profile_picture = $path;
         }
+
         $user->save();
 
-        return response()->json(['message' => 'Data updated successfully', 'profile_picture_url' => $user->profile_picture]); 
+        return response()->json(['message' => 'Data updated successfully', 'profile_picture_url' => $user->profile_picture]);
     }
 }
