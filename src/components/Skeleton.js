@@ -1,7 +1,9 @@
 import React from 'react'
 
-function Skeleton() {
-  return (
+function Skeleton({type}) {
+  return ( 
+  <>
+  {type === 'tickets' ? 
     <div className="w-full space-y-10 animate-pulse p-3 py-5">
       <div className="grid grid-cols-7 gap-4 px-4">
         <div className="h-5 bg-gray-300 rounded-full w-40"></div>
@@ -25,7 +27,21 @@ function Skeleton() {
       </div>
       ))}
       </div>
+    </div>
+    : 
+    <div className="w-full space-y-10 animate-pulse p-3 py-5">
+      <div className="space-y-8">
+        <div className="h-5 bg-gray-200 rounded-full w-full"></div>
+        <div className="h-5 bg-gray-200 rounded-full w-full"></div>
+        <div className="h-5 bg-gray-200 rounded-full w-full"></div>
+        <div className="h-5 bg-gray-200 rounded-full w-full"></div>
+        <div className="h-5 bg-gray-200 rounded-full w-full"></div>
+        <div className="h-5 bg-gray-200 rounded-full w-full"></div>
+        <div className="h-5 bg-gray-200 rounded-full w-full"></div>
+      </div>
     </div> 
+    }
+  </>
   )
 }
 

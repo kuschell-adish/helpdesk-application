@@ -3,13 +3,13 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 
 import axiosInstance from '../../utils/axiosInstance';
-
-import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import Loading from '../../components/Loading';
 
 function ArticleDetail() {
   const { id } = useParams();
   const [article, setArticle] = useState("");
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     document.title = 'adish HAP | Knowledge Base'    
@@ -22,6 +22,9 @@ function ArticleDetail() {
         catch(error) {
             console.error("Error fetching data", error);
         }
+        finally {
+          setLoading(false);
+        }
     }; 
     fetchArticle();
 },[id]);
@@ -29,11 +32,13 @@ function ArticleDetail() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-        <Navbar />
-        <div className="flex flex-col md:flex-row gap-x-10 pt-20">
-            <div className="flex-none md:w-20 lg:w-28">
-            <Sidebar />
-            </div>
+        <div className="flex flex-col md:flex-row p-5">
+          <div className="w-[4%]">
+            <Sidebar/>
+          </div>
+          {loading
+          ? <Loading/>
+          :
             <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
               <div className="flex flex-row justify-between p-2 items-center">
                 <div className="flex flex-row items-center gap-x-2">
@@ -55,6 +60,7 @@ function ArticleDetail() {
                 <div className="text-sm" dangerouslySetInnerHTML={{ __html: article.content }} />
               </div>
             </div>
+            }
         </div>
     </div>
   )

@@ -10,16 +10,18 @@ import { IoLogOutOutline } from "react-icons/io5";
 
 import axiosInstance from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
 function Sidebar() {
-    const [user, setUser] = useState(""); 
+    const { user } = useUser(); 
     const [isOpen, setIsOpen] = useState(false); 
     const navigate = useNavigate();
     const handleLogout = async(e) => {
         e.preventDefault();
         try {
-        const response = await axiosInstance.post('/logout');          
-          localStorage.removeItem("user");       
+        const response = await axiosInstance.post('/logout');     
+          localStorage.clear();      
+          // sessionStorage.clear();   
           console.log("logged out:", response.data); 
           navigate('/login'); 
         }
@@ -27,11 +29,6 @@ function Sidebar() {
           console.error("Error posting data", error); 
         }
       }
-
-    useEffect(() => {
-        const authenticatedUser = localStorage.getItem('user');
-        setUser(JSON.parse(authenticatedUser)); 
-    },[]);
     
   return (
     <div className="min-h-screen hidden md:block">
