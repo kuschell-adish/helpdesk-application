@@ -25,7 +25,8 @@ return [
         'comments*',
         'update/profile',
         'admin-tickets',
-        'user-tickets'
+        'user-tickets',
+        'articles*'
     ],
 
     'allowed_methods' => ['*'],

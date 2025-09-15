@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,10 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('comments', CommentController::class)->only([
         'index', 'store', 'update', 'destroy'
+    ]);
+
+    Route::resource('articles', ArticleController::class)->only([
+        'index', 'store', 'show', 'update', 'destroy'
     ]);
 
 });
