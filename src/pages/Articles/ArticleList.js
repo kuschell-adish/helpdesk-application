@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef} from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import ArticleTable from '../../components/ArticleTable';
 import Searchbar from '../../components/Searchbar';
@@ -14,10 +13,12 @@ import axiosInstance from '../../utils/axiosInstance';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Skeleton from '../../components/Skeleton';
 
 function ArticleList() {    
     const { user } = useUser(); 
     const [articles, setArticles] = useState([]); 
+    const [loading, setLoading] = useState(true); 
 
     const fetchArticles = async() => {
         try {
@@ -27,6 +28,9 @@ function ArticleList() {
         }
         catch(error) {
             console.error("Error fetching data", error);
+        }
+        finally {
+          setLoading(false);
         }
     }; 
 
@@ -110,11 +114,10 @@ function ArticleList() {
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />
-        <Navbar />
-        <div className="flex flex-col md:flex-row gap-x-10 pt-20">
-            <div className="flex-none md:w-20 lg:w-28">
-                <Sidebar />
-            </div>
+        <div className="flex flex-col md:flex-row p-5">
+          <div className="w-[4%]">
+            <Sidebar/>
+          </div>
             <div className="w-full bg-white p-5 rounded-lg shadow mr-3 mb-5">
                 <div className="flex flex-row justify-between">
                     <p className="text-sm font-semibold">Knowledge Base</p>
@@ -126,7 +129,14 @@ function ArticleList() {
               value={searchValue}
               onChange={handleSearchChange}
               />
-              <ArticleTable searchValue={searchValue}/>
+              {loading 
+              ? <Skeleton />
+              :<ArticleTable 
+                articleList={articles}
+                searchValue={searchValue}
+              />
+              }
+              
             </div>
         </div>
 

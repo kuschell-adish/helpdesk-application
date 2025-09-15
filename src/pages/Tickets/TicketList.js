@@ -70,7 +70,7 @@ function TicketList() {
                   />
                 <Filter onFilterChange={handleFilterChange} />
                 {loading 
-                ? <Skeleton/>
+                ? <Skeleton type="tickets"/>
                 : 
                 newTickets.length > 0 
                 ? (

@@ -16,10 +16,10 @@ import Input from './Input';
 
 import axiosInstance from '../utils/axiosInstance';
 
-function ArticleTable({searchValue}) {
+function ArticleTable({articleList, searchValue}) {
     const { user } = useUser(); 
     const quillRef = useRef(null);
-    const [filteredArticles, setFilteredArticles] = useState([]); 
+    const [filteredArticles, setFilteredArticles] = useState(articleList); 
 
     const fetchArticles = async() => {
         try {
