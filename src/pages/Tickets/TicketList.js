@@ -3,20 +3,26 @@ import Sidebar from '../../components/Sidebar'
 import TicketTable from '../../components/TicketTable'
 import Searchbar from '../../components/Searchbar';
 import Filter from '../../components/Filter';
-import Loading from '../../components/Loading';
 
 import axiosInstance from '../../utils/axiosInstance';
 
 import { IoDocumentsOutline } from "react-icons/io5";
 import Skeleton from '../../components/Skeleton';
 
+import Pagination from '@mui/material/Pagination';
+
 function TicketList() {
   const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState("");
   const [newTickets, setNewTickets] = useState([]); 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const handleSearchChange = (value) => {
     setSearchValue(value); 
   }; 
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
   const [filtersValue, setFiltersValue] = useState({
     allStatus:false,
@@ -39,8 +45,10 @@ function TicketList() {
     document.title = "adish HAP | My Tickets"
     const fetchTickets = async () => {
       try {
-        const response = await axiosInstance.get('/user-tickets');
-        setNewTickets(response.data.tickets || []); 
+        const response = await axiosInstance.get(`/user/tickets?page=${page}`);
+        const paginated = response.data.tickets;
+        setNewTickets(paginated.data || []); 
+        setTotalPages(paginated.last_page)
       } catch (error) {
         console.error('Error fetching tickets:', error);
       } 
@@ -49,14 +57,14 @@ function TicketList() {
       }
     };
     fetchTickets();
-  },[]); 
+  },[page]); 
 
-  console.log(newTickets); 
+  console.log("tickets", newTickets); 
 
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-        <div className="flex flex-col md:flex-row p-5">
+    <div className="bg-gray-50 min-h-screen flex flex-col">
+        <div className="flex flex-col md:flex-row p-5 flex-grow">
           <div className="w-[4%]">
               <Sidebar/>
             </div>
@@ -74,12 +82,23 @@ function TicketList() {
                 : 
                 newTickets.length > 0 
                 ? (
-                  <TicketTable 
-                    propTickets={newTickets}
-                    filtersValue={filtersValue} 
-                    searchValue={searchValue} 
-                    loading={loading}
-                  />
+                  <>
+                    <TicketTable 
+                      propTickets={newTickets}
+                      filtersValue={filtersValue} 
+                      searchValue={searchValue} 
+                      loading={loading}
+                    />
+                    <div className="flex justify-center mt-auto py-10">
+                      <Pagination 
+                        count={totalPages} 
+                        page={page}
+                        onChange={handlePageChange}
+                        variant="outlined"
+                      />
+                    </div>
+                    
+                  </>
                 ) 
                 : (
                   <div className="flex flex-col items-center justify-center mt-5 gap-2 p-10">

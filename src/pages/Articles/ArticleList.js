@@ -15,16 +15,24 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Skeleton from '../../components/Skeleton';
 
+import Pagination from '@mui/material/Pagination';
+
 function ArticleList() {    
     const { user } = useUser(); 
     const [articles, setArticles] = useState([]); 
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
+    
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const handlePageChange = (event, value) => {
+      setPage(value);
+    };
 
     const fetchArticles = async() => {
         try {
-            const response = await axiosInstance.get('/articles'); 
-            const articlesData = response.data.articles; 
-            setArticles(articlesData); 
+            const response = await axiosInstance.get(`/articles?page=${page}`); 
+            const paginated = response.data.articles;
+            setArticles(paginated.data || []); 
         }
         catch(error) {
             console.error("Error fetching data", error);
@@ -37,7 +45,7 @@ function ArticleList() {
     useEffect(() => {
       document.title = 'adish HAP | Knowledge Base';
       fetchArticles();
-  },[]);
+  },[page]);
 
   const [searchValue, setSearchValue] = useState("");
   const handleSearchChange = (value) => {
@@ -131,10 +139,21 @@ function ArticleList() {
               />
               {loading 
               ? <Skeleton />
-              :<ArticleTable 
+              :
+              <>
+              <ArticleTable 
                 articleList={articles}
                 searchValue={searchValue}
               />
+              <div className="flex justify-center mt-auto py-10">
+                <Pagination 
+                  count={totalPages} 
+                  page={page}
+                  onChange={handlePageChange}
+                  variant="outlined"
+                />
+              </div>
+              </>
               }
               
             </div>
