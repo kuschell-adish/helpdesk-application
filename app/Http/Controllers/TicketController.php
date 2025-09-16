@@ -39,10 +39,17 @@ class TicketController extends Controller
 
     public function userTickets (Request $request) {
         $user = $request->user();
-        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
-                ->where('user_id', $user->id)
-                ->orderBy('id', 'desc')
-                ->get();
+
+        $tickets = Ticket::with([
+            'department:id,category',
+            'user:id,name',
+            'priority:id,category',
+            'status:id,category',
+            'admin:id,name'
+        ])
+        ->where('user_id', $user->id)
+        ->orderBy('id', 'desc')
+        ->paginate(10);
 
         return response()->json(['tickets' => $tickets]);
     }

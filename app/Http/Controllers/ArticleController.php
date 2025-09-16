@@ -11,17 +11,17 @@ use Illuminate\Support\Facades\Auth;
 class ArticleController extends Controller
 {
     public function index () {
-        $articles = Article::with('user')
+        $articles = Article::with('user:id,name')
         ->orderBy('created_at', 'desc')
-        ->get();
+        ->paginate(10);
 
-        return response()->json(['articles' => $articles]); 
+        return response()->json(['articles' => $articles]);
     }
 
     public function show ($id) {
         $article = Article::findOrFail($id)->load('user.company', 'user.department');
 
-        return response()->json(['article' => $article]); 
+        return response()->json(['article' => $article]);
     }
 
     public function store (Request $request) {
@@ -38,8 +38,8 @@ class ArticleController extends Controller
             'content' => $validated['descriptionInput']
         ]);
 
-        return response()->json(['message' => 'Data stored successfully', 'data' => $newArticle]); 
-    } 
+        return response()->json(['message' => 'Data stored successfully', 'data' => $newArticle]);
+    }
 
     public function update (Request $request, $id) {
         $validated = $request->validate([
@@ -52,7 +52,7 @@ class ArticleController extends Controller
         $article->fill($validated);
         $article->save();
 
-        return response()->json(['message' => 'Data updated successfully', 'data' => $article]); 
+        return response()->json(['message' => 'Data updated successfully', 'data' => $article]);
     }
 
     public function destroy($id) {
@@ -60,7 +60,7 @@ class ArticleController extends Controller
 
         $article->delete();
 
-        return response()->json(['message' => 'Data deleted successfully']); 
+        return response()->json(['message' => 'Data deleted successfully']);
 
 
     }

@@ -15,12 +15,3 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-
-Route::middleware('auth:sanctum')->resource('articles', ArticleController::class)->only([
-    'index', 'store', 'show', 'update', 'destroy'
-]);
-
-Route::middleware('auth:sanctum')->resource('users', UserController::class)->only([
-    'index', 'update'
-]);

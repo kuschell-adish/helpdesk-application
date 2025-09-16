@@ -27,8 +27,8 @@ Route::middleware('web')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/user-tickets', [TicketController::class, 'userTickets']);
-    Route::get('/admin-tickets', [TicketController::class, 'adminTickets']);
+    Route::get('/user/tickets', [TicketController::class, 'userTickets']);
+    Route::get('/admin/tickets', [TicketController::class, 'adminTickets']);
     Route::post('/update/profile', [UserController::class, 'updateProfile']);
 
     Route::resource('tickets', TicketController::class)->only([
