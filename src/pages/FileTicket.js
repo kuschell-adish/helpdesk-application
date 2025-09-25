@@ -20,12 +20,14 @@ function FileTicket() {
 
   const [departments, setDepartments] = useState([]); 
   const [priorities, setPriorities] = useState([]); 
+  const [allUsers, setAllUsers] = useState([]); 
   const [employees, setEmployees] = useState([]); 
   const [filteredEmployees, setFilteredEmployees] = useState([]); 
 
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedPriority, setSelectedPriority] = useState("");
+  const [selectedUser, setSelectedUser] = useState("");
   const [titleInput, setTitleInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState(""); 
   const [isChecked, setIsChecked] = useState(false); 
@@ -51,6 +53,10 @@ function FileTicket() {
 
   const handlePriorityChange = (value) => {
     setSelectedPriority(value); 
+  }
+
+  const handleUserChange = (value) => {
+    setSelectedUser(value); 
   }
 
   const handleDescriptionChange = (value) => {
@@ -134,6 +140,7 @@ function FileTicket() {
     setSelectedDepartment("");
     setSelectedEmployee("");
     setSelectedPriority("");
+    setSelectedUser("");
     setTitleInput("");
     setDescriptionInput("");
     setFilesInput([]); 
@@ -145,6 +152,7 @@ function FileTicket() {
       const formData = new FormData();
 
       formData.append('authUser', user?.id);
+      formData.append('selectedUser', selectedUser);
       formData.append('selectedDepartment', selectedDepartment);
       formData.append('selectedEmployee', selectedEmployee);
       formData.append('selectedPriority', selectedPriority);
@@ -177,6 +185,9 @@ function FileTicket() {
   }
 
   const isButtonDisabled = () => {
+    if (user?.role === 'admin') {
+      return !selectedDepartment  || !selectedPriority || !selectedUser || !titleInput || !descriptionInput || hasTitleError() || hasDescriptionError() || hasFileError;
+    }
     return !selectedDepartment  || !selectedPriority || !titleInput || !descriptionInput || hasTitleError() || hasDescriptionError() || hasFileError;
   }
 
@@ -202,9 +213,11 @@ function FileTicket() {
         const departmentsData = response.data.departments;
         const employeesData = response.data.employees;
         const prioritiesData = response.data.priorities; 
+        const usersData = response.data.users; 
         setDepartments(departmentsData); 
         setEmployees(employeesData);
         setPriorities(prioritiesData);
+        setAllUsers(usersData); 
       }
       catch (error) {
         console.error("Error fetching data", error); 
@@ -232,7 +245,7 @@ function FileTicket() {
     );
   } 
 
-  console.log(selectedDepartment); 
+  console.log("selectedUser", selectedUser); 
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />
@@ -243,6 +256,17 @@ function FileTicket() {
             <div className="w-full bg-white p-5 rounded-lg shadow">
               <p className="text-sm font-semibold">File a Ticket</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 px-2 py-3">
+                {user?.role === 'admin'
+                ? (
+                  <Input
+                    label="Name"
+                    type="select"
+                    name="name"
+                    value={selectedUser}
+                    options={allUsers}
+                    onChange={handleUserChange}
+                  />)
+                : (
                 <Input
                 label="Name"
                 type="text"
@@ -250,6 +274,7 @@ function FileTicket() {
                 value={userName}
                 isDisabled={true}
                 />
+                )}
                 <Input
                 label="Date"
                 type="text"
