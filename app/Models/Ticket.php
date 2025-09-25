@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
-    use HasFactory, HasEvents; 
+    use HasFactory, HasEvents;
 
     protected $fillable = [
         'user_id',
@@ -26,12 +26,12 @@ class Ticket extends Model
         return $this->belongsTo(Department::class, 'department_id');
     }
 
-    public function user () 
+    public function user ()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function priority () 
+    public function priority ()
     {
         return $this->belongsTo(Priority::class, 'priority_id');
     }
@@ -40,7 +40,7 @@ class Ticket extends Model
     {
         return $this->hasMany(History::class, 'ticket_id', 'id');
     }
-    
+
     public function attachments () {
         return $this->hasMany(Attachment::class, 'ticket_id', 'id');
     }
@@ -58,6 +58,15 @@ class Ticket extends Model
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    
+    //assigned to admin and null but assigned to admin's department
+    public function scopeAdminTickets($query, $adminId, $departmentId) {
+        return $query->where(function($q) use ($adminId, $departmentId) {
+            $q->where('admin_id', $adminId)
+                ->orWhere(function($q2) use ($departmentId) {
+                    $q2->whereNull('admin_id')
+                        ->where('department_id', $departmentId);
+                });
+        });
+    }
 
 }

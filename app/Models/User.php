@@ -41,6 +41,7 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
+
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -54,5 +55,15 @@ class User extends Authenticatable
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isUser()
+    {
+        return $this->role === 'user';
     }
 }
