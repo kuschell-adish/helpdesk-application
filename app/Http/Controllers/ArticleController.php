@@ -19,7 +19,7 @@ class ArticleController extends Controller
     }
 
     public function show ($id) {
-        $article = Article::findOrFail($id)->load('user.company', 'user.department');
+        $articles = Article::with('user.company', 'user.department')->findOrFail($id);
 
         return response()->json(['article' => $article]);
     }

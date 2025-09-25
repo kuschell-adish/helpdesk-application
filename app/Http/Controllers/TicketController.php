@@ -55,19 +55,18 @@ class TicketController extends Controller
     }
 
     public function adminTickets (Request $request) {
-        $adminId = $request->query('adminId');
-        $deptId = $request->query('deptId');
+        $user = $request->user();
 
-        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
-            ->where(function($query) use ($adminId, $deptId) {
-            $query->where('admin_id', $adminId)
-                ->orWhere(function($query) use ($deptId) {
-                    $query->whereNull('admin_id')
-                        ->where('department_id', $deptId);
-                });
-        })
+        $tickets = Ticket::with([
+            'department:id,category',
+            'user:id,name',
+            'priority:id,category',
+            'status:id,category',
+            'admin:id,name'
+        ])
+        ->adminTickets($user->id, $user->department_id)
         ->orderBy('id', 'desc')
-        ->get();
+        ->paginate(10);
 
         //get adish depts
         $departments = Department::all();
@@ -91,15 +90,21 @@ class TicketController extends Controller
         //get statuses
         $statuses = Status::all();
 
+        //get users for admin
+        $users = User::all();
+
         return response()->json([
             'departments' => $departments,
             'employees' => $employees,
             'priorities' => $priorities,
-            'statuses' => $statuses
+            'statuses' => $statuses,
+            'users' => $users
         ]);
     }
 
     public function store (Request $request) {
+        $user = Auth::user();
+
         $validated = $request->validate([
             'authUser' => 'required|integer|exists:users,id',
             'selectedDepartment' => 'required|integer|exists:departments,id',
@@ -108,18 +113,33 @@ class TicketController extends Controller
             'titleInput' => 'required|string|min:10',
             'descriptionInput' => 'required|string|min:10',
             'fileNames' => 'nullable|array|max:5',
-            'filesInput.*' => 'file|mimes:jpeg,jpg,png,bmp,mp4,mov,doc,docx,pdf|max:50000'
+            'filesInput.*' => 'file|mimes:jpeg,jpg,png,bmp,mp4,mov,doc,docx,pdf|max:50000',
+            'selectedUser' => 'nullable|integer|exists:users,id',
         ]);
 
-        $newTicket = Ticket::create([
-            'user_id' => $validated['authUser'],
-            'department_id' => $validated['selectedDepartment'],
-            'admin_id' => $validated['selectedEmployee'],
-            'priority_id' => $validated['selectedPriority'],
-            'status_id' => 1, //newly created ticket
-            'title' => $validated['titleInput'],
-            'description' => $validated['descriptionInput'],
-        ]);
+        if ($user->isAdmin()) {
+            $newTicket = Ticket::create([
+                'user_id' => $validated['selectedUser'],
+                'department_id' => $validated['selectedDepartment'],
+                'admin_id' => $validated['selectedEmployee'],
+                'priority_id' => $validated['selectedPriority'],
+                'status_id' => 1, //newly created ticket
+                'is_admin_creation' => 'true',
+                'title' => $validated['titleInput'],
+                'description' => $validated['descriptionInput'],
+            ]);
+        }
+        else {
+            $newTicket = Ticket::create([
+                'user_id' => $validated['authUser'],
+                'department_id' => $validated['selectedDepartment'],
+                'admin_id' => $validated['selectedEmployee'],
+                'priority_id' => $validated['selectedPriority'],
+                'status_id' => 1, //newly created ticket
+                'title' => $validated['titleInput'],
+                'description' => $validated['descriptionInput'],
+            ]);
+        }
 
         if ($request->hasFile('filesInput')) {
             foreach ($request->file('filesInput') as $file) {
@@ -138,8 +158,6 @@ class TicketController extends Controller
             }
         }
 
-        $user = Auth::user();
-
         History::create([
             'ticket_id' => $newTicket->id,
             'user_id' => $user->id,
@@ -153,7 +171,6 @@ class TicketController extends Controller
         ]);
 
         return response()->json(['message' => 'Data stored successfully', 'data' => $newTicket]);
-
     }
 
     public function show ($id) {
