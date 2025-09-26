@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import UserProfile from '../components/UserProfile';
 import Sidebar from '../components/Sidebar';
 
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Profile() {

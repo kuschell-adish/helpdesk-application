@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from '../components/Sidebar';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import Loading from '../components/Loading';
 
 import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext';
@@ -17,7 +18,7 @@ import { useUser } from '../context/UserContext';
 import { IoDocumentTextOutline } from "react-icons/io5";
 
 function FileTicket() {
-
+  const [loading, setLoading] = useState(true);
   const [departments, setDepartments] = useState([]); 
   const [priorities, setPriorities] = useState([]); 
   const [allUsers, setAllUsers] = useState([]); 
@@ -36,7 +37,6 @@ function FileTicket() {
 
   const quillRef = useRef(null);
   const { user } = useUser(); 
-  const userName = user ? `${user.name}` : ''; 
   const navigate = useNavigate(); 
 
   const handleTitleChange = (value) => {
@@ -222,6 +222,9 @@ function FileTicket() {
       catch (error) {
         console.error("Error fetching data", error); 
       }
+      finally {
+        setLoading(false);
+      }
     };
     fetchDepartments();
   },[]); 
@@ -245,7 +248,6 @@ function FileTicket() {
     );
   } 
 
-  console.log("selectedUser", selectedUser); 
   return (
     <div className="bg-gray-50 min-h-screen">
         <ToastContainer />
@@ -253,6 +255,9 @@ function FileTicket() {
           <div className="w-[4%]">
             <Sidebar/>
           </div>
+          {loading
+          ? <Loading />
+          :
             <div className="w-full bg-white p-5 rounded-lg shadow">
               <p className="text-sm font-semibold">File a Ticket</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 px-2 py-3">
@@ -271,7 +276,7 @@ function FileTicket() {
                 label="Name"
                 type="text"
                 name="name"
-                value={userName}
+                value={user?.name}
                 isDisabled={true}
                 />
                 )}
@@ -400,6 +405,7 @@ function FileTicket() {
                 </div>
               </div>
             </div>
+            }
         </div>
     </div>
   )

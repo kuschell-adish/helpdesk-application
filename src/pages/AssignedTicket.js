@@ -9,7 +9,6 @@ import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext';
 
 import { IoDocumentsOutline } from "react-icons/io5";
-
 import { Pagination } from '@mui/material';
 
 function AssignedTicket() {
@@ -17,6 +16,13 @@ function AssignedTicket() {
   const [loading, setLoading] = useState(true); 
   const [searchValue, setSearchValue] = useState("");
   const [newTickets, setNewTickets] = useState([]); 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const handlePageChange = (value) => {
+    setPage(value);
+  };
+
   const handleSearchChange = (value) => {
     setSearchValue(value); 
   }; 
@@ -38,13 +44,6 @@ function AssignedTicket() {
     setFiltersValue(newFilters);
   };
 
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  const handlePageChange = (event, value) => {
-    setPage(value);
-  };
-
   useEffect(() => {
     document.title = "adish HAP | Assigned Tickets"
     const fetchTickets = async () => {
@@ -62,9 +61,6 @@ function AssignedTicket() {
     };
     fetchTickets(); 
   },[user?.id, user?.department_id]); 
-
-  console.log(newTickets);
-
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">

@@ -21,7 +21,6 @@ function Sidebar() {
         try {
         const response = await axiosInstance.post('/logout');     
           localStorage.clear();      
-          // sessionStorage.clear();   
           console.log("logged out:", response.data); 
           navigate('/login'); 
         }

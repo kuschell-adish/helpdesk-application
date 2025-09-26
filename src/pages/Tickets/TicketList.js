@@ -3,12 +3,10 @@ import Sidebar from '../../components/Sidebar'
 import TicketTable from '../../components/TicketTable'
 import Searchbar from '../../components/Searchbar';
 import Filter from '../../components/Filter';
-
-import axiosInstance from '../../utils/axiosInstance';
-
-import { IoDocumentsOutline } from "react-icons/io5";
 import Skeleton from '../../components/Skeleton';
 
+import axiosInstance from '../../utils/axiosInstance';
+import { IoDocumentsOutline } from "react-icons/io5";
 import Pagination from '@mui/material/Pagination';
 
 function TicketList() {
@@ -17,10 +15,12 @@ function TicketList() {
   const [newTickets, setNewTickets] = useState([]); 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
   const handleSearchChange = (value) => {
     setSearchValue(value); 
   }; 
-  const handlePageChange = (event, value) => {
+
+  const handlePageChange = (value) => {
     setPage(value);
   };
 
@@ -58,9 +58,6 @@ function TicketList() {
     };
     fetchTickets();
   },[page]); 
-
-  console.log("tickets", newTickets); 
-
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
