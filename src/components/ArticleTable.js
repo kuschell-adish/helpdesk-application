@@ -9,32 +9,28 @@ import 'react-toastify/dist/ReactToastify.css';
 import { HiOutlinePencil } from "react-icons/hi";
 import { IoTrashBinOutline } from "react-icons/io5";
 
-import { useUser } from '../context/UserContext'; 
-
 import Modal from './Modal';
 import Input from './Input';
 
+import { useUser } from '../context/UserContext'; 
 import axiosInstance from '../utils/axiosInstance';
 
-function ArticleTable({articleList, searchValue}) {
+function ArticleTable({searchValue, articleList, onRefresh}) {
     const { user } = useUser(); 
     const quillRef = useRef(null);
-    const [filteredArticles, setFilteredArticles] = useState(articleList); 
-
-    const fetchArticles = async() => {
-        try {
-            const response = await axiosInstance.get('/articles'); 
-            const articlesData = response.data.articles; 
-            setFilteredArticles(articlesData); 
-        }
-        catch(error) {
-            console.error("Error fetching data", error);
-        }
-    }; 
+    const [filteredArticles, setFilteredArticles] = useState([]);
 
     useEffect(() => {
-        fetchArticles(); 
-    },[searchValue]); 
+        if (!searchValue) {
+          setFilteredArticles(articleList); 
+        } else {
+          const filtered = articleList.filter(article =>
+            article.title.toLowerCase().includes(searchValue.toLowerCase())
+          );
+          setFilteredArticles(filtered);
+        }
+      }, [searchValue, articleList]); 
+      
 
     const [articleContent, setArticleContent] = useState({
         title: '',
@@ -70,11 +66,12 @@ function ArticleTable({articleList, searchValue}) {
                 title: articleContent.title,
                 content: articleContent.content
             }); 
-            console.log("Successful putting data", response);
+            console.log("Successful editing data", response.data);
             toast.success("Your article has been updated successfully.");
 
-            fetchArticles(); 
+            await onRefresh();
             handleEditClose(); 
+           
         }
         catch(error) {
             console.error("Error putting data", error); 
@@ -112,17 +109,17 @@ function ArticleTable({articleList, searchValue}) {
     const handleDelete = async () => {
         try {
             const response = await axiosInstance.delete(`/articles/${deletingArticleId}`); 
-            console.log("Successful deleting data", response);
+            console.log("Successful deleting data", response.data);
             toast.success("Your article has been deleted successfully.");
 
-            fetchArticles();
+            await onRefresh();
             handleDeleteClose(); 
+            
         }
         catch(error) {
             console.error("Error putting data", error); 
         }
     }
-
 
   return (
     <div>

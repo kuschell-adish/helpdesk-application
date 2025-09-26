@@ -5,13 +5,16 @@ import PriorityLevel from '../components/PriorityLevel';
 import Sidebar from '../components/Sidebar';
 import TicketCounts from '../components/TicketCounts';
 import TicketStatus from '../components/TicketStatus';
+import Loading from '../components/Loading';
 
 import axiosInstance from '../utils/axiosInstance';
 import { useUser } from '../context/UserContext'; 
 
-import Loading from '../components/Loading';
-
 function Dashboard() {
+    const { user } = useUser(); 
+    const [departmentData, setDepartmentData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const [newTicketCount, setNewTicketCount] = useState(0);
     const [progressTicketCount, setProgressTicketCount] = useState(0);
     const [resolvedTicketCount, setResolvedTicketCount] = useState(0);
@@ -21,11 +24,7 @@ function Dashboard() {
     const [mediumTicketCount, setMediumTicketCount] = useState(0);
     const [highTicketCount, setHighTicketCount] = useState(0);
 
-    const [departmentData, setDepartmentData] = useState([]);
-    const { user } = useUser(); 
-
-    const [loading, setLoading] = useState(true);
-
+    
     useEffect(() => {
         document.title = 'adish HAP | Dashboard';
         

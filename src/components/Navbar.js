@@ -1,9 +1,6 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 
 function Navbar() {
-  const location = useLocation(); 
-
   return (
     <header className="bg-white fixed top-0 left-0 w-full z-10 h-16 border-gray-100 border-b-2">
       <div className="flex flex-wrap items-center justify-between px-4 py-4">
