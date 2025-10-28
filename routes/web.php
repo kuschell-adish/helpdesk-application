@@ -31,6 +31,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/tickets', [TicketController::class, 'adminTickets']);
     Route::post('/update/profile', [UserController::class, 'updateProfile']);
 
+    Route::resource('users', UserController::class)->only([
+        'index', 'store'
+    ]);
+
     Route::resource('tickets', TicketController::class)->only([
         'index', 'create', 'store', 'show', 'update'
     ]);
