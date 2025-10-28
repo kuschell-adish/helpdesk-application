@@ -161,6 +161,10 @@ function TicketDetail() {
         }
       },[selectedDepartment, employees]);
 
+    const isButtonDisabled = () => {
+        return !selectedDepartment || !selectedEmployee || !selectedPriority || !selectedStatus; 
+      }
+
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -250,6 +254,7 @@ function TicketDetail() {
                             label="Update"
                             isPrimary={true}
                             onClick={handleUpdateClick}
+                            isDisabled={isButtonDisabled()}
                         />
                         </div>
                     </div>
