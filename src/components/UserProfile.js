@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useState } from 'react';
 
 import Input from './Input';
@@ -87,7 +87,7 @@ function UserProfile() {
     <div className="w-full flex flex-col justify-center items-center my-10 gap-10 md:flex-row">
       <div className="w-1/2 flex flex-col items-center justify-center">
         <label htmlFor="profile_picture" className="text-sm font-medium">Profile Picture</label>
-        <img id="profile_picture_preview" src={preview} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+        <img id="profile_picture_preview" src={preview} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="user-profile" />
         {user?.login_provider === 'manual' && 
         <>
         <input id="profilePicture" name="profilePicture" type="file" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg" onChange={handleFileChange}></input>
@@ -95,8 +95,8 @@ function UserProfile() {
           <p className="text-xs text-gray-400 mt-1 mb-1">Accepts formats such as JPEG and PNG and must not exceed into 2MB.</p>
           {hasFileError && <p className="text-xs text-red-500">{errorMessage}</p>}
         </div>
-        <div className="w-full flex justify-end">
-          <div className="w-1/10 md:1/4 flex justify-end mr-2">
+        <div className="w-full md:w-1/4">
+          <div className="w-1/10 md:1/4 mr-2">
             <Button 
               type="submit"
               label="Update"
@@ -108,12 +108,26 @@ function UserProfile() {
         </div>
         </>}
       </div>
-      <div className="w-1/2">
+      <div className="w-full md:w-1/2">
         <Input
           label="Name"
           type="text"
           name="first_name"
-          value={user?.name || ''}
+          value={user?.first_name || ''}
+          isDisabled={true}
+        />
+         <Input
+          label="Middle Name"
+          type="text"
+          name="middle_name"
+          value={user?.middle_name || ''}
+          isDisabled={true}
+        />
+        <Input
+          label="Name"
+          type="text"
+          name="last_name"
+          value={user?.last_name || ''}
           isDisabled={true}
         />
         <Input

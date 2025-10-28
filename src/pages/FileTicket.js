@@ -276,7 +276,7 @@ function FileTicket() {
                 label="Name"
                 type="text"
                 name="name"
-                value={user?.name}
+                value={`${user?.first_name} ${user?.last_name}`}
                 isDisabled={true}
                 />
                 )}

@@ -14,7 +14,7 @@ function Attachment({ticket}) {
         {ticket.attachments && ticket.attachments.length > 0 ? (
              <div className="grid grid-cols-2 mt-2">
                 {ticket.attachments.map((attachment) => (
-                    <div className="flex flex-row gap-x-2 px-2 pb-3" key={attachment.file_name}>
+                    <div className="flex flex-row gap-x-2 px-2 pb-3" key={attachment.id}>
                         {attachment.file_name.endsWith('.mp4') || attachment.file_name.endsWith('.mov') ? 
                         (
                            <video

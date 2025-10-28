@@ -44,7 +44,7 @@ function ArticleDetail() {
                 <div className="flex flex-row items-center gap-x-2">
                   <img src={article?.user?.profile_picture} className="w-10 h-10 mb-3 mt-2 rounded-full object-cover" alt="Default Profile Picture" />
                   <div className="flex flex-col text-sm">
-                    <p className="font-medium">{article?.user?.name}</p>
+                    <p className="font-medium">{article?.user?.first_name} {article?.user?.last_name}</p>
                     <p>{article?.user?.department?.category}</p>
                   </div>
                 </div>

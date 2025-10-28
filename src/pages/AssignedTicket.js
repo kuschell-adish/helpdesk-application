@@ -78,7 +78,7 @@ function AssignedTicket() {
                   />
                   <Filter onFilterChange={handleFilterChange} />
                   {loading 
-                ? <Skeleton type="tickets"/>
+                ? <Skeleton />
                 : newTickets.length > 0 
                 ? (
                 <>

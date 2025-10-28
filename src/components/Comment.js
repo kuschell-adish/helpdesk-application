@@ -111,6 +111,7 @@ function Comment({ticketComments}) {
             const formData = new FormData();
 
             formData.append("userId", user?.id); 
+            //to fix - no ticketId if no ticketComments
             formData.append("ticketId", ticketComments[0].ticket_id);
             formData.append("commentText", comment); 
 
@@ -208,6 +209,7 @@ function Comment({ticketComments}) {
     const isEditingComentValid = editingComment && typeof editingComment === 'string' && editingComment.trim().length < 3;
 
   return (
+    //to fix - photo and name becomes undefined upon reload
     <div className="w-full p-1">
         <p className="text-sm font-semibold">
             {comments.length === 0 ? 'Discussion' 
@@ -243,7 +245,7 @@ function Comment({ticketComments}) {
                         id="comment" 
                         rows="3"
                         className="w-full px-2 text-sm text-gray-900 bg-white border-0" 
-                        placeholder={`Comment as ${user?.name}`}
+                        placeholder={`Comment as ${user?.first_name}`}
                         required 
                         value = {comment}
                         onChange={handleChange}>
@@ -285,7 +287,7 @@ function Comment({ticketComments}) {
                                 src={comment?.user?.profile_picture ? comment?.user?.profile_picture : '../default.png' }
                                 alt="Profile Picture"
                             />
-                            {comment?.user?.name}
+                            {comment?.user?.first_name} {comment?.user?.last_name}
                         </p>
                         <p className="text-xs text-gray-600">{moment(comment.updated_at).format('MMMM D, YYYY  h:mm A')}</p>
                     </div>
