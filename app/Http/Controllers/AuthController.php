@@ -39,7 +39,8 @@ class AuthController extends Controller
 
         if ($payload) {
             $email = $payload['email'];
-            $name = $payload['name'];
+            $firstName = $payload['given_name'];
+            $lastName = $payload['family_name'];
             $picture = $payload['picture'];
 
             $user = User::where('email', $email)->first();
@@ -47,7 +48,8 @@ class AuthController extends Controller
             if (!$user) {
                 $user = User::create([
                     'email' => $email,
-                    'name' => $name,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
                     'department_id' => 1, // default
                     'role' => 'user', // default
                     'login_provider' => 'google', // default

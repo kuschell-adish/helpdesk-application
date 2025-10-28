@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class ArticleController extends Controller
 {
     public function index () {
-        $articles = Article::with('user:id,name')
+        $articles = Article::with('user:id,first_name,last_name')
         ->orderBy('created_at', 'desc')
         ->paginate(10);
 
@@ -19,7 +19,7 @@ class ArticleController extends Controller
     }
 
     public function show ($id) {
-        $articles = Article::with('user.company', 'user.department')->findOrFail($id);
+        $article = Article::with('user.company', 'user.department')->findOrFail($id);
 
         return response()->json(['article' => $article]);
     }

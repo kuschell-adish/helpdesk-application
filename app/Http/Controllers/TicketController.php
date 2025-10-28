@@ -42,10 +42,10 @@ class TicketController extends Controller
 
         $tickets = Ticket::with([
             'department:id,category',
-            'user:id,name',
+            'user:id,first_name,last_name',
             'priority:id,category',
             'status:id,category',
-            'admin:id,name'
+            'admin:id,first_name,last_name'
         ])
         ->where('user_id', $user->id)
         ->orderBy('id', 'desc')
@@ -59,10 +59,10 @@ class TicketController extends Controller
 
         $tickets = Ticket::with([
             'department:id,category',
-            'user:id,name',
+            'user:id,first_name,last_name',
             'priority:id,category',
             'status:id,category',
-            'admin:id,name'
+            'admin:id,first_name,last_name'
         ])
         ->adminTickets($user->id, $user->department_id)
         ->orderBy('id', 'desc')
@@ -77,7 +77,7 @@ class TicketController extends Controller
     }
 
 
-    public function create () {
+    public function create (Request $request) {
         //get adish depts
         $departments = Department::all();
 
@@ -90,8 +90,9 @@ class TicketController extends Controller
         //get statuses
         $statuses = Status::all();
 
-        //get users for admin
-        $users = User::all();
+        //users for admin
+        $user = $request->user();
+        $users = User::where('department_id', $user->department_id)->get();
 
         return response()->json([
             'departments' => $departments,
