@@ -162,38 +162,43 @@ class TicketController extends Controller
         History::create([
             'ticket_id' => $newTicket->id,
             'user_id' => $user->id,
-            'description' => 'Ticket has been created by ' . $user->name . '.',
+            'description' => 'Ticket has been created by ' . $user->first_name . ' ' . $user->last_name.   '.',
         ]);
 
         History::create([
             'ticket_id' => $newTicket->id,
             'user_id' => $user->id,
-            'description' => 'Ticket has set its status to New by ' . $user->name . '.',
+            'description' => 'Ticket has set its status to New by ' . $user->first_name . ' '. $user->last_name. '.',
         ]);
 
         return response()->json(['message' => 'Data stored successfully', 'data' => $newTicket]);
     }
 
     public function show ($id) {
-        $ticket = Ticket::findOrFail($id)->load('priority', 'status', 'admin', 'user', 'department', 'attachments', 'histories', 'comments');
+        $ticket = Ticket::findOrFail($id)->load([
+            'priority',
+            'status',
+            'admin',
+            'user',
+            'department',
+            'attachments',
+            'histories',
+            'comments'
+        ]);
+        $ticket->comments->load(['user:id,first_name,last_name,profile_picture']);
 
         return response()->json(['ticket' => $ticket]);
     }
 
     public function update (Request $request, Ticket $ticket) {
         $validated = $request->validate([
-            'selectedDepartment' => 'required|integer|exists:departments,id',
-            'selectedEmployee' => 'required|integer|exists:users,id',
-            'selectedPriority' => 'required|integer|exists:priorities,id',
-            'selectedStatus' => 'required|integer|exists:statuses,id'
+            'department_id' => 'required|integer|exists:departments,id',
+            'admin_id' => 'required|integer|exists:users,id',
+            'priority_id' => 'required|integer|exists:priorities,id',
+            'status_id' => 'required|integer|exists:statuses,id'
         ]);
 
-        $ticket->update([
-            'department_id' => $validated['selectedDepartment'],
-            'employee_id' => $validated['selectedEmployee'],
-            'priority_id' => $validated['selectedPriority'],
-            'status_id' => $validated['selectedStatus'],
-        ]);
+        $ticket->update($validated);
 
         return response()->json(['message' => 'Data updated successfully', 'data' => $ticket]);
 
