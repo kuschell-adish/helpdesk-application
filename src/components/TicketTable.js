@@ -116,7 +116,7 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
                             <td className="px-5 py-3">{ticket.title}</td>
                             <td className="px-5 py-3">{ticket.department.category}</td>
                             <td className={`px-5 py-3 ${!ticket?.admin && 'italic'}`}>
-                              {ticket?.admin ?  `${ticket.admin.name}` : 'Unassigned' }
+                              {ticket?.admin ?  `${ticket.admin.first_name} ${ticket.admin.last_name}` : 'Unassigned' }
                             </td>
                             <td className="px-5 py-3">
                                 <span className={`inline-block rounded-full py-1.5 w-3/4 text-white text-center ${statusClasses(ticket.status.category)}`}>

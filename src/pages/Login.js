@@ -51,6 +51,8 @@
         if (error.response.status === 401) {
           console.error('401 error:', error.response.data);
           setHasInputError(true);
+          setEmail("");
+          setPassword("");
           setErrorMessage("Invalid credentials. Make sure you are a registered user."); 
         }
         console.error("Error posting data", error); 

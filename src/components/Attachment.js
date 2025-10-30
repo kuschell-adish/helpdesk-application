@@ -9,28 +9,28 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 function Attachment({ticket}) {
 
   return (
-    <div className="flex flex-col text-sm px-2 mb-7">
+    <div className="flex flex-col text-sm mb-7">
         <p className="font-medium">Attachments</p>
         {ticket.attachments && ticket.attachments.length > 0 ? (
-             <div className="grid grid-cols-2 mt-2">
+             <div className="grid grid-cols-1 md:grid-cols-2">
                 {ticket.attachments.map((attachment) => (
-                    <div className="flex flex-row gap-x-2 px-2 pb-3" key={attachment.id}>
+                    <div className="flex flex-col md:flex-row gap-x-2 p-2" key={attachment.id}>
                         {attachment.file_name.endsWith('.mp4') || attachment.file_name.endsWith('.mov') ? 
                         (
                            <video
                                 src={attachment.file_path}
                                 controls
-                                className="w-32 h-32 object-cover rounded-sm"
+                                className="w-24 h-24 object-cover rounded-sm"
                             />
                         ) : attachment.file_name.endsWith('.doc') || attachment.file_name.endsWith('.docx') || attachment.file_name.endsWith('.pdf') ? (
                             <a href={attachment.file_path} target="_blank" rel="noopener noreferrer">
-                                <IoDocumentTextOutline className="text-8xl"/>
+                                <IoDocumentTextOutline className="text-7xl"/>
                             </a>
                         ) : (
                             <ModalImage
                                 small={attachment.file_path}
                                 large={attachment.file_path}
-                                className="w-32 h-32 object-cover rounded-sm"
+                                className="w-24 h-24 object-cover rounded-sm"
                                 alt={attachment.file_name}
                             />
                         )}
@@ -43,7 +43,7 @@ function Attachment({ticket}) {
             </div>
             ) : (
                 <div className="flex flex-col items-center justify-center ">
-                    <FaRegImages className="w-32 h-32 text-gray-300"/>
+                    <FaRegImages className="w-24 h-24 text-gray-300"/>
                     <p className="text-sm">No attached files</p>
                 </div>
             )}
