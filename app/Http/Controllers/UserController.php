@@ -66,7 +66,7 @@ class UserController extends Controller
         ]);
 
         $user = new User();
-        $user->login_provider =
+        // $user->login_provider =
         $user->fill($validated);
 
         if ($request->hasFile('profilePicture')) {
