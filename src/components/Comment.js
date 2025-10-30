@@ -11,7 +11,7 @@ import { IoTrashBinOutline } from "react-icons/io5";
 import Modal from './Modal'; 
 import ModalImage from "react-modal-image";
 
-function Comment({ticketComments}) {
+function Comment({ticketComments, ticketId}) {
     const { user } = useUser(); 
     const [comment, setComment] = useState([]);
     const [comments, setComments] = useState([]);
@@ -19,36 +19,7 @@ function Comment({ticketComments}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [deletingCommentId, setDeletingCommentId] = useState(null);
 
-    const fetchComments = async() => {
-        try {
-            const response = await axiosInstance.get('/comments', {
-                params: {ticketId: ticketComments[0].ticket_id }
-            })
-            const commentsData = response.data.comments;
-            setComments(commentsData); 
-        }   
-        catch(error){
-            console.error("Error fetching data", error); 
-        }
-    }; 
-
-    const firstFetch = () => {
-        setComments(ticketComments); 
-    }
-
-    useEffect(() => {
-       firstFetch(); 
-    },[ticketComments]);
-
-    const handleChange = (e) => {
-        setComment(e.target.value); 
-    };
-
     const fileInputRef = useRef(null);
-    const handleButtonClick = () => {
-        fileInputRef.current.click(); 
-    }; 
-
     const [fileInput, setFileInput] = useState(null); 
     const [preview, setPreview] = useState(null); 
     const [hasFileError,setHasFileError] = useState(false); 
@@ -59,7 +30,44 @@ function Comment({ticketComments}) {
         'image/bmp',
         'video/mp4',
         'video/quicktime',
-      ]);
+    ]);
+
+    const isCommentValid = comment && typeof comment === 'string' && comment.trim().length < 3;
+    const isEditingComentValid = editingComment && typeof editingComment === 'string' && editingComment.trim().length < 3;
+
+    const [showEdit, setShowEdit] = useState(false);
+    const handleEditClose = () => setShowEdit(false);
+    const [showDelete, setShowDelete] = useState(false);
+    const handleDeleteClose = () => setShowDelete(false);
+
+    const firstFetch = () => {
+        setComments(ticketComments);
+    };
+
+    const fetchComments = async() => {
+        try {
+            const response = await axiosInstance.get('/comments', {
+                params: {ticketId: ticketId }
+            })
+            const commentsData = response.data.comments;
+            setComments(commentsData); 
+        }   
+        catch(error){
+            console.error("Error fetching data", error); 
+        }
+    }; 
+
+    useEffect(() => {
+        firstFetch();
+     },[ticketComments]);
+
+    const handleChange = (e) => {
+        setComment(e.target.value); 
+    };
+
+    const handleButtonClick = () => {
+        fileInputRef.current.click(); 
+    }; 
 
     const handleFileChange = (event) => {
         const file = event.target.files[0]; 
@@ -95,7 +103,6 @@ function Comment({ticketComments}) {
             const objectURL = URL.createObjectURL(file);
             setPreview({ file, preview: objectURL, type: 'video' });
           }
-
         }
     };
 
@@ -104,16 +111,14 @@ function Comment({ticketComments}) {
         setFileInput(null); 
     } 
 
-
     const handleCommentSubmit = async(e) => {
         e.preventDefault(); 
         try {
             const formData = new FormData();
 
-            formData.append("userId", user?.id); 
-            //to fix - no ticketId if no ticketComments
-            formData.append("ticketId", ticketComments[0].ticket_id);
-            formData.append("commentText", comment); 
+            formData.append("user_id", user?.id); 
+            formData.append("ticket_id", ticketId);
+            formData.append("comment", comment); 
 
             if (fileInput) {
                 formData.append("fileInput", fileInput); 
@@ -139,16 +144,19 @@ function Comment({ticketComments}) {
         }
     }; 
 
-    const [showEdit, setShowEdit] = useState(false);
-    const handleEditClose = () => setShowEdit(false);
+    const handleEditChange = (e) => {
+        setEditingComment(e.target.value);
+    };
+
     const handleShowEdit = (commentId, commentText) => {
         setEditingComment(commentText);  
         setEditingCommentId(commentId);  
         setShowEdit(true);
     };
 
-    const handleEditChange = (e) => {
-        setEditingComment(e.target.value);
+    const handleShowDelete = (commentId) => {
+        setDeletingCommentId(commentId); 
+        setShowDelete(true);
     };
     
     const handleEditSubmit = async () => {
@@ -172,13 +180,6 @@ function Comment({ticketComments}) {
         }
     }
 
-    const [showDelete, setShowDelete] = useState(false);
-    const handleDeleteClose = () => setShowDelete(false);
-    const handleShowDelete = (commentId) => {
-        setDeletingCommentId(commentId); 
-        setShowDelete(true);
-    };
-
     const handleDelete = async () => {
         try {
             const response = await axiosInstance.delete(`/comments/${deletingCommentId}`); 
@@ -200,16 +201,13 @@ function Comment({ticketComments}) {
         return !comment || comment.length < 3;
     };
 
-    const isCommentValid = comment && typeof comment === 'string' && comment.trim().length < 3;
-
     const isEditDisabled = () => {
         return !editingComment || editingComment.length < 3;
     };
 
-    const isEditingComentValid = editingComment && typeof editingComment === 'string' && editingComment.trim().length < 3;
+    console.log(comments);
 
   return (
-    //to fix - photo and name becomes undefined upon reload
     <div className="w-full p-1">
         <p className="text-sm font-semibold">
             {comments.length === 0 ? 'Discussion' 
