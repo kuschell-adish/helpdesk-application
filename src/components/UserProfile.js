@@ -86,8 +86,8 @@ function UserProfile() {
   return (
     <div className="w-full flex flex-col justify-center items-center my-10 gap-10 md:flex-row">
       <div className="w-1/2 flex flex-col items-center justify-center">
-        <label htmlFor="profile_picture" className="text-sm font-medium">Profile Picture</label>
-        <img id="profile_picture_preview" src={preview} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="user-profile" />
+        <p className="text-sm font-medium">Profile Picture</p>
+        <img src={preview} className="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="user-profile" />
         {user?.login_provider === 'manual' && 
         <>
         <input id="profilePicture" name="profilePicture" type="file" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg" onChange={handleFileChange}></input>
@@ -120,13 +120,15 @@ function UserProfile() {
           label="Middle Name"
           type="text"
           name="middle_name"
+          autoComplete="additional-name"
           value={user?.middle_name || ''}
           isDisabled={true}
         />
         <Input
-          label="Name"
+          label="Last Name"
           type="text"
           name="last_name"
+          autoComplete="family-name"
           value={user?.last_name || ''}
           isDisabled={true}
         />

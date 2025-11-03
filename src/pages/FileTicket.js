@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useRef, useEffect } from 'react';
 import { format } from 'date-fns';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -304,7 +304,7 @@ function FileTicket() {
                       <label htmlFor="unassigned" className="text-sm font-medium">Leave Unassigned</label>
                     </div>
                   </div>
-                  <select name="employee" value ={selectedEmployee} className="mt-2 sm:mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm" onChange={handleEmployeeChange} disabled={isChecked}>
+                  <select id="employee" name="employee" value ={selectedEmployee} className="mt-2 sm:mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm" onChange={handleEmployeeChange} disabled={isChecked}>
                   <option value="">Select employee </option>
                     {filteredEmployees.map(employee => (
                       <option key ={employee.id} value={employee.id}>
@@ -335,12 +335,12 @@ function FileTicket() {
               </div>
               <div className="flex flex-col gap-y-1">
                 <div style={{ display: 'flex', flexDirection: 'column', height: '200px', padding: '0 0.5rem', marginBottom: '1.75rem',  position: 'relative', }}>
-                    <label htmlFor="description" className="text-sm font-medium mb-2" >Description</label>
+                    <p className="text-sm font-medium mb-2" >Description</p>
                     <ReactQuill
-                      ref={quillRef}
-                      style={{ height: '200px'}}
+                      theme="snow" 
                       readOnly={false}
-                      value={descriptionInput}
+                      style={{ height: '200px'}}
+                      value={descriptionInput} 
                       onChange={handleDescriptionChange}
                     />
                 </div>

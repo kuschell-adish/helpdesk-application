@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'; 
 import { Link } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -167,9 +167,9 @@ function ArticleTable({searchValue, articleList, onRefresh}) {
 
             <div className="flex flex-col gap-y-1 mb-10">
                 <div style={{ display: 'flex', flexDirection: 'column', height: '200px', marginBottom: '1.75rem',  position: 'relative', }}>
-                    <label htmlFor="description" className="text-sm font-medium mb-2" >Description</label>
+                    <p className="text-sm font-medium mb-2">Description</p>
                     <ReactQuill
-                      ref={quillRef}
+                      theme="snow"
                       style={{ height: '200px'}}
                       readOnly={false}
                       value={articleContent.content}

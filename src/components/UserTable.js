@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'; 
 import { Link } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
