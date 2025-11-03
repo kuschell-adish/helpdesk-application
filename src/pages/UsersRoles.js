@@ -225,8 +225,8 @@ return (
           maxSize="max-w-5xl"
       >
         <div className="flex flex-col items-center">
-          <label htmlFor="profile_picture" className="text-sm font-medium">Profile Picture</label>
-          <img id="profile_picture_preview" src={preview ? preview : "../default.png"} className="w-16 h-16 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+          <label htmlFor="profilePicture" className="text-sm font-medium">Profile Picture</label>
+          <img src={preview ? preview : "../default.png"} className="w-16 h-16 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
           <input id="profilePicture" name="profilePicture" type="file" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg" onChange={handleFileChange}></input>
           <div className="flex flex-col mb-5 text-center">
             <p className="text-xs text-gray-400 mt-1 mb-1">Accepts formats such as JPEG and PNG and must not exceed into 2MB.</p>
@@ -245,6 +245,7 @@ return (
               onChange={changeHandler(setFirstName)}
               hasError={firstName && firstName.length < 2}
               error="The first name must at least be 2 characters."
+              autoComplete="first_name"
           />
           <Input
               label="Middle Name"
@@ -255,6 +256,7 @@ return (
               onChange={changeHandler(setMiddleName)}
               hasError={middleName && middleName.length < 2}
               error="The middle name must at least be 2 characters."
+              autoComplete="additional_name"
           />
           <Input
               label="Last Name"
@@ -265,6 +267,7 @@ return (
               onChange={changeHandler(setLastName)}
               hasError={lastName && lastName.length < 2}
               error="The last name must at least be 2 characters."
+              autoComplete="family_name"
           />
           <Input
               label="Email Address"
