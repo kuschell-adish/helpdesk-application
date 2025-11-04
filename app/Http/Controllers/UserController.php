@@ -57,7 +57,7 @@ class UserController extends Controller
 
         $validated = $request->validate([
             "profile_picture" => 'nullable|image|mimes:jpeg,png,bmp,tiff|max:2048',
-            "email" => ['required', Rule::unique('users', 'email')],
+            "email" => ['required', Rule::unique('users', 'email')->ignore($id)],
             "first_name" => 'required|string|min:2|max:30',
             "middle_name" => 'nullable|string|min:2|max:30',
             "last_name" => 'required|string|min:2|max:30',
@@ -66,7 +66,7 @@ class UserController extends Controller
         ]);
 
         $user = new User();
-        // $user->login_provider =
+        $user->login_provider = "manual";
         $user->fill($validated);
 
         if ($request->hasFile('profilePicture')) {
@@ -84,7 +84,35 @@ class UserController extends Controller
 
         return response()->json(['message' => 'user created successfully', 'user' => $user]);
 
+    }
 
+    public function update (Request $request, $id) {
+        $validated = $request->validate([
+            "profile_picture" => 'nullable|image|mimes:jpeg,png,bmp,tiff|max:2048',
+            "email" => ['required', Rule::unique('users', 'email')],
+            "first_name" => 'required|string|min:2|max:30',
+            "middle_name" => 'nullable|string|min:2|max:30',
+            "last_name" => 'required|string|min:2|max:30',
+            "department_id" => 'required',
+            "position" => 'required|string|min:5|max:30',
+        ]);
 
+        $user = User::findOrFail($id);
+        $user->fill($validated);
+
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $originalFileName = $file->getClientOriginalName();
+            $path = $this->imageService->upload(
+                $file,
+                'profiles/',
+                'profile_'
+            );
+            $user->profile_picture = $path;
+        }
+
+        $user->save();
+
+        return response()->json(['message' => 'Data updated successfully', 'data' => $user]);
     }
 }

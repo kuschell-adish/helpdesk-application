@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/update/profile', [UserController::class, 'updateProfile']);
 
     Route::resource('users', UserController::class)->only([
-        'index', 'store'
+        'index', 'store', 'update'
     ]);
 
     Route::resource('tickets', TicketController::class)->only([
