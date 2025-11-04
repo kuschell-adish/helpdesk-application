@@ -63,7 +63,7 @@
       <div className="bg-gray-50 w-full min-h-screen flex flex-col items-center justify-center">
         <Navbar />
         <div className="w-full max-w-xl text-center px-4 mt-5">
-          <img src="home.svg" className="mb-4 mx-auto w-2/3"></img>
+          <img src="home.svg" className="mb-4 mx-auto w-2/3" alt="landing-profile"></img>
           <p className="text-2xl sm:text-3xl font-bold">Empowering support, one ticket at a time with adish HAP.</p>
         </div>
         <div className="w-full max-w-md mt-6 px-4">

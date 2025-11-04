@@ -34,11 +34,11 @@ function Input({label, type, name, value,placeholder, options, onChange, isDisab
             <option value="">Select {name}</option>
             {options.map(option => (
               <option key ={option.id} value={option.id}>
-                {option.name ? 
-                option.name : 
-                option.category ? 
-                option. category :
-                option.first_name + ' ' + option.last_name}
+                {option.name
+                ? option.name
+                : option.category
+                ? option.category 
+                : option.first_name + ' ' + option.last_name}
               </option>
             ))}
           </select>
