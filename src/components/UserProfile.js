@@ -110,7 +110,7 @@ function UserProfile() {
       </div>
       <div className="w-full md:w-1/2">
         <Input
-          label="Name"
+          label="First Name"
           type="text"
           name="first_name"
           value={user?.first_name || ''}
@@ -139,18 +139,18 @@ function UserProfile() {
           value={user?.email || ''}
           isDisabled={true}
         />
+         <Input
+          label="Position"
+          type="text"
+          name="position"
+          value={user?.position || ''}
+          isDisabled={true}
+        />
         <Input
           label="Department"
           type="text"
           name="department"
           value={user?.department?.category || ''}
-          isDisabled={true}
-        />
-        <Input
-          label="Company"
-          type="text"
-          name="company"
-          value="Adish International Corporation"
           isDisabled={true}
         />
         <div className="w-1/10 md:1/4 flex flex-col justify-end">
