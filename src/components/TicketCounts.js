@@ -83,9 +83,6 @@ function TicketCounts({seriesData}) {
             right: 2,
             top: -20
           },
-        },
-        fill: {
-          opacity: 1,
         }
       }
     }

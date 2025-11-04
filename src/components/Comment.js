@@ -40,10 +40,6 @@ function Comment({ticketComments, ticketId}) {
     const [showDelete, setShowDelete] = useState(false);
     const handleDeleteClose = () => setShowDelete(false);
 
-    const firstFetch = () => {
-        setComments(ticketComments);
-    };
-
     const fetchComments = async() => {
         try {
             const response = await axiosInstance.get('/comments', {
@@ -58,7 +54,7 @@ function Comment({ticketComments, ticketId}) {
     }; 
 
     useEffect(() => {
-        firstFetch();
+        setComments(ticketComments);
      },[ticketComments]);
 
     const handleChange = (e) => {
@@ -283,7 +279,7 @@ function Comment({ticketComments, ticketId}) {
                             <img
                                 className="mr-2 w-6 h-6 rounded-full"
                                 src={comment?.user?.profile_picture ? comment?.user?.profile_picture : '../default.png' }
-                                alt="Profile Picture"
+                                alt={`${comment?.user?.first_name}'s profile`}
                             />
                             {comment?.user?.first_name} {comment?.user?.last_name}
                         </p>

@@ -224,7 +224,7 @@ return (
       >
         <div className="flex flex-col items-center">
           <label htmlFor="profilePicture" className="text-sm font-medium">Profile Picture</label>
-          <img src={preview ? preview : "../default.png"} className="w-16 h-16 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+          <img src={preview ? preview : "../default.png"} className="w-16 h-16 mb-3 mt-2 rounded-full object-cover" alt="user's profile" />
           <input id="profilePicture" name="profilePicture" type="file" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg" onChange={handleFileChange}></input>
           <div className="flex flex-col mb-5 text-center">
             <p className="text-xs text-gray-400 mt-1 mb-1">Accepts formats such as JPEG and PNG and must not exceed into 2MB.</p>

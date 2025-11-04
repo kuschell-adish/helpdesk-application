@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState, useCallback } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -78,11 +78,23 @@ function UserTable({searchValue, userList, departmentsList}) {
         }
     }, [searchValue, userList]); 
 
+    const showSelectedUser = useCallback(() => {
+      if (!selectedUser) return; 
+      setFirstName(selectedUser?.first_name || "");
+      setMiddleName(selectedUser?.middle_name || "");
+      setLastName(selectedUser?.last_name || "");
+      setEmail(selectedUser?.email || "");
+      setPosition(selectedUser?.position || "");
+      setSelectedDepartment(selectedUser?.department_id || "");
+      setPreview(selectedUser?.profile_picture || "");
+
+    }, [selectedUser]);
+
     useEffect(() => {
         if (selectedUser) {
             showSelectedUser();
         }
-    },[selectedUser]);
+    },[selectedUser, showSelectedUser]);
 
     const [showEdit, setShowEdit] = useState(false);
     const handleEditClose = () => {
@@ -94,16 +106,6 @@ function UserTable({searchValue, userList, departmentsList}) {
       setShowEdit(true); 
       setSelectedUser(user); 
     };
-
-    const showSelectedUser = () => {
-        setFirstName(selectedUser?.first_name || "");
-        setMiddleName(selectedUser?.middle_name || "");
-        setLastName(selectedUser?.last_name || "");
-        setEmail(selectedUser?.email || "");
-        setPosition(selectedUser?.position || "");
-        setSelectedDepartment(selectedUser?.department_id || "");
-        setPreview(selectedUser?.profile_picture || "");
-      }
 
     const handleEditSubmit = async() => {
         try {
@@ -163,7 +165,7 @@ function UserTable({searchValue, userList, departmentsList}) {
                                 <img
                                     className="mr-2 w-8 h-8 rounded-full"
                                     src={user?.profile_picture ? user?.profile_picture : '../default.png' }
-                                    alt="Profile Picture"
+                                    alt={`${user?.first_name}'s profile`}
                                 />
                                 {user?.first_name} {user?.last_name}
                             </p>
@@ -191,7 +193,7 @@ function UserTable({searchValue, userList, departmentsList}) {
         >
         <div className="flex flex-col items-center">
           <p className="text-sm font-medium">Profile Picture</p>
-          <img src={preview} className="w-16 h-16 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+          <img src={preview} className="w-16 h-16 mb-3 mt-2 rounded-full object-cover" alt={`${selectedUser?.first_name}'s profile`} />
           {selectedUser?.login_provider === "manual" && (
             <>
           <input id="profilePicture" name="profilePicture" type="file" className="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg" onChange={handleFileChange}></input>
