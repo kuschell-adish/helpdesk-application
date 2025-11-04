@@ -12,13 +12,11 @@ import Modal from '../components/Modal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useUser } from '../context/UserContext';
 import axiosInstance from '../utils/axiosInstance';
 
 import Pagination from '@mui/material/Pagination';
 
-function UsersRoles() {
-  const { user } = useUser(); 
+function UserList() {
   const navigate = useNavigate(); 
   const [users, setUsers] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -198,7 +196,7 @@ return (
             <UserTable 
               searchValue={searchValue}
               userList={users}
-              onRefresh={() => fetchUsers(page)}
+              departmentsList={departments}
             />
              <div className="flex justify-center mt-auto py-10">
               <Pagination 
@@ -234,7 +232,7 @@ return (
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           
           <Input
               label="First Name"
@@ -305,4 +303,4 @@ return (
 )
 }
 
-export default UsersRoles
+export default UserList

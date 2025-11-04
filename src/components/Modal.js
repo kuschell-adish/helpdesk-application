@@ -4,7 +4,7 @@ function Modal({ maxSize, isVisible, onClose, onSubmit, title, children, error, 
     if (!isVisible) return null;
 
     return (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-10" onMouseDown={onClose}>
+        <div className="min-h-screen overflow-y-scroll fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-20" onMouseDown={onClose}>
             <div className={`bg-white ${maxSize} w-full p-6 rounded-lg shadow-lg`} onMouseDown={(e) => e.stopPropagation()}>
                 <div className="flex justify-between justify-center items-center">
                     <p className="text-sm text-orange-500 font-semibold">{title}</p>

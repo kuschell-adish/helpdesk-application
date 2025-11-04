@@ -12,7 +12,7 @@ import AssignedTicket from './pages/AssignedTicket';
 import ArticleList from './pages/Articles/ArticleList';
 import ArticleDetail from './pages/Articles/ArticleDetail';
 import Profile from './pages/Profile';
-import UsersRoles from './pages/UsersRoles';
+import UserList from './pages/UserList';
 
 import { UserProvider } from './context/UserContext';
 
@@ -32,7 +32,7 @@ function App() {
             <Route path="/articles" element={<PrivateRoute element={<ArticleList />} />} />
             <Route path="/articles/:id" element={<PrivateRoute element={<ArticleDetail />} />} />
 
-          <Route path="/users/roles" element={<PrivateRoute element={<UsersRoles />} />}/>
+          <Route path="/users" element={<PrivateRoute element={<UserList />} />}/>
 
           {/* profile */}
           <Route path="/profile" element={<PrivateRoute element={<Profile />} />}/>

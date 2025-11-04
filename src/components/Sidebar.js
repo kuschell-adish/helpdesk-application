@@ -75,9 +75,9 @@ function Sidebar() {
                   />
                   {user?.role === 'admin' && (
                     <NavItem 
-                        link = "/users/roles"
+                        link = "/users"
                         icon = {<HiOutlineUserGroup />}
-                        label= "User Roles"
+                        label= "Users"
                         isOpen={isOpen}
                     />
                   )}
@@ -99,7 +99,7 @@ function Sidebar() {
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner border-t flex justify-around items-center py-2 md:hidden z-20">
+        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-inner border-t flex justify-around items-center py-2 md:hidden z-10">
           <NavItem 
             link = "/dashboard"
             icon = {<LuLayoutDashboard />}
@@ -134,7 +134,7 @@ function Sidebar() {
           />
           {user?.role === 'admin' && (
             <NavItem 
-              link = "/users/roles"
+              link = "/users"
               icon = {<HiOutlineUserGroup />}
               label= "User Roles"
               isOpen={isOpen}
