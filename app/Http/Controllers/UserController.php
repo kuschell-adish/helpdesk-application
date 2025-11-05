@@ -115,4 +115,16 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Data updated successfully', 'data' => $user]);
     }
+
+    public function updateStatus (Request $request) {
+        $validated = $request->validate([
+            'id' => 'required'
+        ]);
+
+        $user = User::findOrFail($validated['id']);
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        return response()->json(['message' => 'Data updated successfully']);
+    }
 }
