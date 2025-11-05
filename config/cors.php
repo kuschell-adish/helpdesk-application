@@ -24,6 +24,7 @@ return [
         'tickets*',
         'comments*',
         'update/profile',
+        'update/status',
         'admin/tickets',
         'user/tickets',
         'articles*',
