@@ -197,6 +197,7 @@ return (
               searchValue={searchValue}
               userList={users}
               departmentsList={departments}
+              onRefresh={() => fetchUsers(page)}
             />
              <div className="flex justify-center mt-auto py-10">
               <Pagination 
