@@ -4,9 +4,10 @@ import { toast } from 'react-toastify';
 
 import Input from './Input';
 import Modal from './Modal';
+import Button from './Button';
 import axiosInstance from '../utils/axiosInstance';
 
-function UserTable({searchValue, userList, departmentsList}) {
+function UserTable({searchValue, userList, departmentsList, onRefresh}) {
     const navigate = useNavigate();
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState("");
@@ -148,9 +149,41 @@ function UserTable({searchValue, userList, departmentsList}) {
     }
     const isEditDisabled = () => {
         return (!firstName || firstName.length < 2) || (!lastName || lastName.length < 2) || !isEmailValid || !selectedDepartment || (!position || position.length < 5 || (middleName && middleName.length < 2)); 
-    } 
+    }
 
-    console.log(filteredUsers);
+    const [userStatus, setUserStatus] = useState(true);
+    const [userId, setUserId] = useState("");
+    const [showStatus, setShowStatus] = useState(false);
+    
+    const handleStatusClose = () => setShowStatus(false);
+    
+    const handleShowStatus = (id, status) => {
+        setShowStatus(true);
+        setUserStatus(status);
+        setUserId(id);
+    };
+
+    const handleStatus = async() => {
+      try {
+        const payload = {
+            id: userId
+        };
+    
+        const response = await axiosInstance.post(`/update/status`, payload, {
+            headers: {
+            'Content-Type': 'application/json'
+            }
+        });
+
+        console.log("passed data:", response.data); 
+        toast.success("User has been updated successfully.");
+        handleStatusClose();
+        await onRefresh();
+    }
+    catch(error) {
+      console.error("Error posting data", error); 
+    }
+    }
 
   return (
     <div>
@@ -170,10 +203,15 @@ function UserTable({searchValue, userList, departmentsList}) {
                                 {user?.first_name} {user?.last_name}
                             </p>
                         </div>
-                        {/* {article.user_id === user.id && (<div className="flex space-x-2 text-orange-500">
-                            <HiOutlinePencil className="w-5 h-5 cursor-pointer" onClick={() => handleShowEdit(article.id, article.title, article.content)}/>
-                            <IoTrashBinOutline className="w-5 h-5 cursor-pointer" onClick={() => handleShowDelete(article.id)} />
-                        </div>)} */}
+                        <div className="w-24 flex justify-center">
+                            <Button 
+                              type="submit"
+                              label={user?.is_active ? "Deactivate" : "Activate"}
+                              isDanger={user?.is_active}
+                              isPrimary={!user?.is_active}
+                              onClick={() => handleShowStatus(user?.id, user?.is_active)}
+                            />
+                        </div>
                     </div>
                     </td>
                 </tr>
@@ -269,6 +307,18 @@ function UserTable({searchValue, userList, departmentsList}) {
             />
         </div>
         </Modal>
+
+        <Modal 
+            isVisible={showStatus} 
+            onClose={handleStatusClose} 
+            onSubmit={handleStatus}
+            title={`Are you sure you want to ${userStatus ? 'deactivate' : 'activate'} this user?`}
+            submitText={userStatus ? 'Deactivate' : 'Activate'}
+            cancelText="Cancel"
+            isDanger={userStatus}
+            isPrimary={!userStatus}
+            maxSize="max-w-lg"
+        />
     </div>
   )
 }
