@@ -10,10 +10,18 @@ use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
-    public function index () {
-        $articles = Article::with('user:id,first_name,last_name')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+    public function index (Request $request) {
+        $search = $request->input('search', '');
+
+        $query = Article::select([
+            'id', 'title'
+        ]);
+
+        if ($search) {
+            $query->whereRaw('LOWER(title) LIKE ?', ['%' . strtolower($search) . '%']);
+        }
+
+        $articles = $query->latest('id')->paginate(5);
 
         return response()->json(['articles' => $articles]);
     }

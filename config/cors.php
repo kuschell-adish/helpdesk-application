@@ -27,8 +27,10 @@ return [
         'update/status',
         'admin/tickets',
         'user/tickets',
+        'employees/*',
         'articles*',
-        'users*'
+        'users*',
+        'departments'
     ],
 
     'allowed_methods' => ['*'],
