@@ -19,14 +19,27 @@ class UserController extends Controller
         $this->imageService = $imageService;
     }
 
-    public function index () {
-        $users = User::paginate(10);
-        $departments = Department::all();
+    public function index (Request $request) {
+        $search = $request->input('search', '');
 
-        return response()->json([
-            'users' => $users,
-            'departments' => $departments
+        $query = User::select([
+            'id', 'first_name', 'last_name', 'profile_picture', 'is_active'
         ]);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(first_name) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(last_name) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        }
+
+        $users = $query->latest('id')->paginate(5);
+
+        return response()->json(['users' => $users]);
+    }
+
+    public function getDepartments () {
+        return response()->json(['departments' => Department::getCachedList()]);
     }
 
     //cannot use put or patch in supabase storage
