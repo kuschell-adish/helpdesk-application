@@ -7,9 +7,10 @@ import Modal from './Modal';
 import Button from './Button';
 import axiosInstance from '../utils/axiosInstance';
 
-function UserTable({searchValue, userList, departmentsList, onRefresh}) {
+//fix fetching departmentsList
+function UserTable({userList, departmentsList, onRefresh}) {
     const navigate = useNavigate();
-    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [departments, setDepartments] = useState(""); 
     const [selectedUser, setSelectedUser] = useState("");
 
     const [preview, setPreview] = useState("");
@@ -67,17 +68,6 @@ function UserTable({searchValue, userList, departmentsList, onRefresh}) {
           setProfilePicture(file); 
         }
     }
-
-    useEffect(() => {
-        if (!searchValue) {
-          setFilteredUsers(userList); 
-        } else {
-          const filtered = userList.filter(user =>
-            user.name.toLowerCase().includes(searchValue.toLowerCase())
-          );
-          setFilteredUsers(filtered);
-        }
-    }, [searchValue, userList]); 
 
     const showSelectedUser = useCallback(() => {
       if (!selectedUser) return; 
@@ -185,11 +175,24 @@ function UserTable({searchValue, userList, departmentsList, onRefresh}) {
     }
     }
 
+    useEffect(() => {
+      const fetchDepartments = async() => {
+        try {
+          const response = await axiosInstance.get(`/departments`); 
+          setDepartments(response.data.departments || []); 
+        }
+        catch(error) {
+            console.error("Error fetching data", error);
+        }
+      }
+      fetchDepartments();
+    },[]);
+
   return (
     <div>
         <table className="border-collapse w-full mt-5">
             <tbody>
-            {filteredUsers.map(user => (
+            {userList.map(user => (
                 <tr key={user.id} className="text-sm">
                     <td className="py-2 px-4 border-b border-gray-300">
                     <div className="flex items-center justify-between w-full">
@@ -292,7 +295,7 @@ function UserTable({searchValue, userList, departmentsList, onRefresh}) {
                 type="select"
                 name="department"
                 value={selectedDepartment}
-                options={departmentsList}
+                options={departments}
                 onChange={changeHandler(setSelectedDepartment)}
             />
             <Input

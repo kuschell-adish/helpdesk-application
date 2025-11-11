@@ -15,23 +15,10 @@ import Input from './Input';
 import { useUser } from '../context/UserContext'; 
 import axiosInstance from '../utils/axiosInstance';
 
-function ArticleTable({searchValue, articleList, onRefresh}) {
+function ArticleTable({articleList, onRefresh}) {
     const { user } = useUser(); 
     const quillRef = useRef(null);
-    const [filteredArticles, setFilteredArticles] = useState([]);
-
-    useEffect(() => {
-        if (!searchValue) {
-          setFilteredArticles(articleList); 
-        } else {
-          const filtered = articleList.filter(article =>
-            article.title.toLowerCase().includes(searchValue.toLowerCase())
-          );
-          setFilteredArticles(filtered);
-        }
-      }, [searchValue, articleList]); 
-      
-
+    
     const [articleContent, setArticleContent] = useState({
         title: '',
         content: ''
@@ -125,7 +112,7 @@ function ArticleTable({searchValue, articleList, onRefresh}) {
     <div>
         <table className="border-collapse w-full mt-5">
             <tbody>
-            {filteredArticles.map(article => (
+            {articleList.map(article => (
                 <tr key={article.id} className="text-sm">
                     <td className="py-2 px-4 border-b border-gray-300">
                     <div className="flex items-center justify-between w-full">

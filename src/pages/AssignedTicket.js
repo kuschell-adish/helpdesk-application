@@ -6,27 +6,17 @@ import Filter from '../components/Filter';
 import Skeleton from '../components/Skeleton';
 
 import axiosInstance from '../utils/axiosInstance';
-import { useUser } from '../context/UserContext';
 
 import { IoDocumentsOutline } from "react-icons/io5";
 import { Pagination } from '@mui/material';
 
 function AssignedTicket() {
-  const { user } = useUser(); 
   const [loading, setLoading] = useState(true); 
   const [searchValue, setSearchValue] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [newTickets, setNewTickets] = useState([]); 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  const handlePageChange = (value) => {
-    setPage(value);
-  };
-
-  const handleSearchChange = (value) => {
-    setSearchValue(value); 
-  }; 
-
   const [filtersValue, setFiltersValue] = useState({
     allStatus:false,
     new:false,
@@ -39,28 +29,72 @@ function AssignedTicket() {
     high:false
   }); 
 
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  const handleSearchChange = (value) => {
+    setSearchValue(value); 
+  }; 
+
   const handleFilterChange = (newFilters) => {
-    console.log('Filters changed:', newFilters);
     setFiltersValue(newFilters);
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchValue);
+    }, 500); 
+    return () => clearTimeout(timer);
+  }, [searchValue]);
+
+  useEffect(() => {
     document.title = "adish HAP | Assigned Tickets"
-    const fetchTickets = async () => {
-      try {
-        const response = await axiosInstance.get('/admin/tickets');
-        const paginated = response.data.tickets;
-        setNewTickets(paginated.data || []); 
-        setTotalPages(paginated.last_page)
-      } catch (error) {
-        console.error('Error fetching tickets:', error);
-      } 
-      finally {
-        setLoading(false); 
+    fetchTickets();
+  }, [debouncedSearch, filtersValue, page]);
+
+  const fetchTickets = async () => {
+    try {
+      const statusIds = [];
+      if (filtersValue.new) statusIds.push(1);
+      if (filtersValue.inProgress) statusIds.push(2);
+      if (filtersValue.resolved) statusIds.push(3);
+      if (filtersValue.closed) statusIds.push(4);
+
+      const priorityIds = [];
+      if (filtersValue.low) priorityIds.push(1);
+      if (filtersValue.medium) priorityIds.push(2);
+      if (filtersValue.high) priorityIds.push(3);
+
+      const params = {
+        search: debouncedSearch,
+        status_ids: statusIds,
+        priority_ids: priorityIds,
+        all_status: filtersValue.allStatus,
+        all_priority: filtersValue.allPriority
       }
-    };
-    fetchTickets(); 
-  },[user?.id, user?.department_id]); 
+
+      console.log('Filters:', filtersValue);
+      console.log('Status IDs:', statusIds);
+      console.log('Priority IDs:', priorityIds);
+      console.log('Params being sent:', params); 
+    
+      const response = await axiosInstance.get(`/admin/tickets?page=${page}`, {
+        params: params
+      });
+
+      const paginated = response.data.tickets;
+      
+      console.log('Response:', response.data); 
+      setNewTickets(paginated.data || []); 
+      setTotalPages(paginated.last_page)
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+    } 
+    finally {
+      setLoading(false); 
+    }
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
@@ -84,8 +118,6 @@ function AssignedTicket() {
                 <>
                   <TicketTable 
                     propTickets={newTickets}
-                    filtersValue={filtersValue} 
-                    searchValue={searchValue} 
                   />
                   <div className="flex justify-center mt-auto py-10">
                       <Pagination 

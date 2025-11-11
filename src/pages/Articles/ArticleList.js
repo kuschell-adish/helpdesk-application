@@ -24,34 +24,51 @@ function ArticleList() {
     
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const handlePageChange = (value) => {
+    const handlePageChange = (event, value) => {
       setPage(value);
     };
 
     const [searchValue, setSearchValue] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
     const handleSearchChange = (value) => {
         setSearchValue(value); 
     }; 
 
-    const fetchArticles = async() => {
-        try {
-            const response = await axiosInstance.get(`/articles?page=${page}`); 
-            const paginated = response.data.articles;
-            setArticles(paginated.data || []); 
-            setTotalPages(paginated.last_page);
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setDebouncedSearch(searchValue);
+      }, 500); 
+      return () => clearTimeout(timer);
+    }, [searchValue]);
+
+    const fetchArticles = async () => {
+      try {
+        const params = {
+          search: debouncedSearch
         }
-        catch(error) {
-            console.error("Error fetching data", error);
-        }
-        finally {
-          setLoading(false);
-        }
-    }; 
+        
+        const response = await axiosInstance.get(`/articles?page=${page}`, {
+          params: params 
+        });
+  
+        const paginated = response.data.articles;
+        
+        console.log('Response:', response.data); 
+        setArticles(paginated.data || []); 
+        setTotalPages(paginated.last_page)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } 
+      finally {
+        setLoading(false); 
+      }
+    };
 
     useEffect(() => {
       document.title = 'adish HAP | Knowledge Base';
       fetchArticles();
-  },[page]);
+  },[debouncedSearch, page]);
 
   const [showCreate, setShowCreate] = useState(false);
   const handleCreateClose = () => {
@@ -143,7 +160,6 @@ function ArticleList() {
               :
               <>
               <ArticleTable 
-                searchValue={searchValue}
                 articleList={articles}
                 onRefresh={() => fetchArticles(page)}
               />

@@ -1,10 +1,8 @@
 import React from 'react'
-import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
-function TicketTable({propTickets, filtersValue, searchValue}) {
-  const [filteredTickets, setFilteredTickets] = useState ([]); 
+function TicketTable({propTickets}) {
 
   const statusClasses = (category) => {
     switch(category) {
@@ -34,52 +32,6 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
     }
   }; 
 
-  useEffect(() => {
-    const statusMap = {
-      new: 1,    
-      inProgress: 2,
-      resolved: 3,
-      closed: 4
-    };
-
-    const priorityMap = {
-      low: 1,    
-      medium: 2,
-      high: 3,
-    };
-
-    const statusFilterActive = Object.keys(statusMap).some(filterKey => filtersValue[filterKey]);
-    const priorityFilterActive = Object.keys(priorityMap).some(filterKey => filtersValue[filterKey]); 
-    const allStatusActive = filtersValue.allStatus;
-    const allPriorityActive = filtersValue.allPriority; 
-    let result = propTickets;
-  
-    if (statusFilterActive || priorityFilterActive || allStatusActive || allPriorityActive) {
-      result = propTickets.filter(ticket => {
-        const matchesSearch = ticket.title.toLowerCase().includes(searchValue.toLowerCase());
-
-        const matchesStatus = allStatusActive || !statusFilterActive ||  Object.keys(statusMap).some(filterKey => {
-          if (filtersValue[filterKey]) {
-            return ticket.status_id === statusMap[filterKey];
-          }
-          return false;
-        });
-
-        const matchesPriority = allPriorityActive || !priorityFilterActive ||  Object.keys(priorityMap).some(filterKey => {
-          if (filtersValue[filterKey]) {
-            return ticket.priority_id === priorityMap[filterKey];
-          }
-          return false;
-        });
-  
-        return matchesSearch && matchesStatus && matchesPriority;
-      });
-    } else {
-      result = propTickets.filter(ticket => ticket.title.toLowerCase().includes(searchValue.toLowerCase()));
-    }
-    setFilteredTickets(result);
-  }, [searchValue, filtersValue, propTickets]);
-  
   return (
     <div>
         <div className="relative overflow-x-auto p-2">
@@ -110,9 +62,9 @@ function TicketTable({propTickets, filtersValue, searchValue}) {
                         </tr>
                     </thead>
                     <tbody>
-                    {filteredTickets.map(ticket => (
+                    {propTickets.map(ticket => (
                         <tr key={ticket.id} className="border-b">
-                            <td className="px-5 py-3">{moment(ticket.created_at).format('MMMM D, YYYY')}</td>
+                            <td className="px-5 py-3">{moment(ticket.updated_at).format('MMMM D, YYYY')}</td>
                             <td className="px-5 py-3">{ticket.title}</td>
                             <td className="px-5 py-3">{ticket.department.category}</td>
                             <td className={`px-5 py-3 ${!ticket?.admin && 'italic'}`}>
