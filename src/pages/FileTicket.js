@@ -18,17 +18,18 @@ import { useUser } from '../context/UserContext';
 import { IoDocumentTextOutline } from "react-icons/io5";
 
 function FileTicket() {
+  const { user } = useUser(); 
+
   const [loading, setLoading] = useState(true);
   const [departments, setDepartments] = useState([]); 
   const [priorities, setPriorities] = useState([]); 
   const [allUsers, setAllUsers] = useState([]); 
-  const [employees, setEmployees] = useState([]); 
   const [filteredEmployees, setFilteredEmployees] = useState([]); 
 
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedPriority, setSelectedPriority] = useState("");
-  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedUser, setSelectedUser] = useState(user?.id);
   const [titleInput, setTitleInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState(""); 
   const [isChecked, setIsChecked] = useState(false); 
@@ -36,32 +37,12 @@ function FileTicket() {
   const [previews, setPreviews] = useState([]);
 
   const quillRef = useRef(null);
-  const { user } = useUser(); 
   const navigate = useNavigate(); 
-
-  const handleTitleChange = (value) => {
-    setTitleInput(value); 
-  }
-
-  const handleDepartmentChange = (value) => {
-    setSelectedDepartment(value); 
-  }
+  const changeHandler = (setter) => (value) => setter(value);
 
   const handleEmployeeChange = (e) => {
     setSelectedEmployee(e.target.value); 
   }
-
-  const handlePriorityChange = (value) => {
-    setSelectedPriority(value); 
-  }
-
-  const handleUserChange = (value) => {
-    setSelectedUser(value); 
-  }
-
-  const handleDescriptionChange = (value) => {
-    setDescriptionInput(value);
-  };
 
   const handleCheckboxChange = () => {
     setIsChecked(prevChecked => {
@@ -151,13 +132,12 @@ function FileTicket() {
     try {
       const formData = new FormData();
 
-      formData.append('authUser', user?.id);
-      formData.append('selectedUser', selectedUser);
-      formData.append('selectedDepartment', selectedDepartment);
-      formData.append('selectedEmployee', selectedEmployee);
-      formData.append('selectedPriority', selectedPriority);
-      formData.append('titleInput', titleInput);
-      formData.append('descriptionInput', descriptionInput); 
+      formData.append('user_id', selectedUser);
+      formData.append('department_id', selectedDepartment);
+      formData.append('admin_id', selectedEmployee);
+      formData.append('priority_id', selectedPriority);
+      formData.append('title', titleInput);
+      formData.append('description', descriptionInput); 
       formData.append('filesInput', filesInput); 
 
       filesInput.forEach(file => {
@@ -207,17 +187,12 @@ function FileTicket() {
 
   useEffect(() => {
     document.title = 'adish HAP | File Ticket';
-    const fetchDepartments = async () => {
+    const fetchInitialLoad = async () => {
       try {
         const response = await axiosInstance.get('/tickets/create');
-        const departmentsData = response.data.departments;
-        const employeesData = response.data.employees;
-        const prioritiesData = response.data.priorities; 
-        const usersData = response.data.users; 
-        setDepartments(departmentsData); 
-        setEmployees(employeesData);
-        setPriorities(prioritiesData);
-        setAllUsers(usersData); 
+        setDepartments(response.data.departments); 
+        setPriorities(response.data.priorities);
+        setAllUsers(response.data.users); 
       }
       catch (error) {
         console.error("Error fetching data", error); 
@@ -226,19 +201,28 @@ function FileTicket() {
         setLoading(false);
       }
     };
-    fetchDepartments();
+    fetchInitialLoad();
   },[]); 
 
   useEffect(() => {
-    if (selectedDepartment) {
-      const departmentId = parseInt(selectedDepartment,10); 
-      const filtered = employees.filter(employee => employee.department_id === departmentId);
-      setFilteredEmployees(filtered); 
+
+    const fetchEmployees = async () => {
+      if (selectedDepartment && !isChecked) {
+          try {
+            const response = await axiosInstance.get(`/employees/${selectedDepartment}`);
+            setFilteredEmployees(response.data.employees);
+          }
+          catch (error) {
+            console.error("Error fetching data", error); 
+            setFilteredEmployees([]);
+          }
+        } else {
+        setFilteredEmployees([]);
+      }
     }
-    else {
-      setFilteredEmployees([]); 
-    }
-  },[selectedDepartment, employees]);
+    fetchEmployees(); 
+  },[selectedDepartment, isChecked]); 
+
 
   const removePreview = (index) => {
     const fileName = previews[index].file.name;
@@ -247,6 +231,8 @@ function FileTicket() {
       prevFiles.filter((file) => file.name !== fileName)
     );
   } 
+
+  console.log("user", selectedUser); 
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -269,7 +255,7 @@ function FileTicket() {
                     name="name"
                     value={selectedUser}
                     options={allUsers}
-                    onChange={handleUserChange}
+                    onChange={changeHandler(setSelectedUser)}
                   />)
                 : (
                 <Input
@@ -293,7 +279,7 @@ function FileTicket() {
                 name="department"
                 value={selectedDepartment}
                 options={departments}
-                onChange={handleDepartmentChange}
+                onChange={changeHandler(setSelectedDepartment)}
                 />
 
                 <div className="flex flex-col">
@@ -308,7 +294,7 @@ function FileTicket() {
                   <option value="">Select employee </option>
                     {filteredEmployees.map(employee => (
                       <option key ={employee.id} value={employee.id}>
-                        {employee.name}
+                        {employee.first_name}  {employee.last_name}
                       </option>
                     ))}
                   </select>
@@ -320,7 +306,7 @@ function FileTicket() {
                 name="title"
                 value={titleInput}
                 placeholder="Describe the subject of the ticket"
-                onChange={handleTitleChange}
+                onChange={changeHandler(setTitleInput)}
                 hasError={hasTitleError()}
                 error="The title must at least be 10 characters."
                 />
@@ -330,7 +316,7 @@ function FileTicket() {
                 name="priority"
                 value={selectedPriority}
                 options={priorities}
-                onChange={handlePriorityChange}
+                onChange={changeHandler(setSelectedPriority)}
                 />
               </div>
               <div className="flex flex-col gap-y-1">
@@ -341,7 +327,7 @@ function FileTicket() {
                       readOnly={false}
                       style={{ height: '200px'}}
                       value={descriptionInput} 
-                      onChange={handleDescriptionChange}
+                      onChange={changeHandler(setDescriptionInput)}
                     />
                 </div>
                 {hasDescriptionError() &&  <p className="text-xs text-red-500 mt-4 ml-2">The description must at least be 10 characters.</p>}
@@ -397,7 +383,7 @@ function FileTicket() {
                   />
                   <Button 
                   type="submit"
-                  label="Submit"
+                  label="File Ticket"
                   isPrimary={true}
                   onClick={handleSubmitClick}
                   isDisabled={isButtonDisabled()}

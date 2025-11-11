@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
 
-function Filter({onFilterChange}) {
+function Filter({onFilterChange, filtersValue}) {
     const [isFilterVisible, setIsFilterVisible] = useState(false); 
     const handleFilterClick = () => {
         setIsFilterVisible(!isFilterVisible); 
     }; 
-
-    const [filtersValue, setFiltersValue] = useState({
-        new:false,
-        inProgress:false, 
-        resolved:false,
-        closed:false,
-        low:false,
-        medium:false,
-        high:false
-      }); 
     
     const handleFilterChange = (e) => {
         const {id, checked} = e.target;
@@ -50,8 +40,6 @@ function Filter({onFilterChange}) {
             updatedFilters.allStatus = ['new', 'inProgress', 'resolved', 'closed'].every(status => updatedFilters[status]);
             updatedFilters.allPriority = ['low', 'medium', 'high'].every(priority => updatedFilters[priority]);
         }
-
-        setFiltersValue(updatedFilters);
         onFilterChange(updatedFilters); 
     }; 
 
@@ -67,7 +55,6 @@ function Filter({onFilterChange}) {
             medium:false,
             high:false
         };
-        setFiltersValue(updatedFilters);
         onFilterChange(updatedFilters); 
         setIsFilterVisible(!isFilterVisible); 
     }
@@ -86,7 +73,7 @@ function Filter({onFilterChange}) {
     <div className="flex flex-col gap-y-2 px-4">
         <div className="flex flex-col mt-2 gap-y-1">
             <p className="font-medium ml-1">Ticket Statuses</p>
-            <div className="flex flex-row gap-x-5">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-x-5">
                 <div className="flex items-center ps-1">
                     <input id="allStatus" type="checkbox" checked={filtersValue.allStatus} onChange={handleFilterChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"></input>
                     <label htmlFor="allStatus" className="py-1.5 ms-1">Select All</label>
@@ -123,7 +110,7 @@ function Filter({onFilterChange}) {
         </div>
         <div className="flex flex-col mt-2 gap-y-1">
             <p className="font-medium ml-1">Priority Level</p>
-            <div className="flex flex-row gap-x-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5">
                 <div className="flex items-center ps-1">
                     <input id="allPriority" type="checkbox" checked={filtersValue.allPriority} onChange={handleFilterChange} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"></input>
                     <label htmlFor="allPriority" className="py-1.5 ms-1">Select All</label>

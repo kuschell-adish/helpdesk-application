@@ -119,23 +119,28 @@ function UserList() {
   } 
 
 
-  const handlePageChange = (value) => {
+  const handlePageChange = (event, value) => {
     setPage(value);
   };
 
 
   const [searchValue, setSearchValue] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const handleSearchChange = (value) => {
       setSearchValue(value); 
   }; 
 
   const fetchUsers = async() => {
     try {
-        const response = await axiosInstance.get(`/users?page=${page}`); 
+        const params = {
+          search: debouncedSearch
+        }
+        const response = await axiosInstance.get(`/users?page=${page}`, {
+          params: params
+        }); 
         const paginated = response.data.users;
         setUsers(paginated.data || []); 
         setTotalPages(paginated.last_page);
-        setDepartments(response.data.departments);
     }
     catch(error) {
         console.error("Error fetching data", error);
@@ -164,9 +169,30 @@ function UserList() {
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchValue);
+    }, 500); 
+    return () => clearTimeout(timer);
+  }, [searchValue]);
+
+
+  useEffect(() => {
     document.title = 'adish HAP | All Users';
     fetchUsers();
-  },[page]);
+  },[debouncedSearch, page]);
+
+  useEffect(() => {
+    const fetchDepartments = async() => {
+      try {
+        const response = await axiosInstance.get(`/departments`); 
+        setDepartments(response.data.departments || []); 
+      }
+      catch(error) {
+          console.error("Error fetching data", error);
+      }
+    }
+    fetchDepartments();
+  },[]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isEmailValid = email && emailRegex.test(email);
@@ -194,9 +220,7 @@ return (
             :
             <>
             <UserTable 
-              searchValue={searchValue}
               userList={users}
-              departmentsList={departments}
               onRefresh={() => fetchUsers(page)}
             />
              <div className="flex justify-center mt-auto py-10">

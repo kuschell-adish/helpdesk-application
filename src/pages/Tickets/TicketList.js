@@ -12,18 +12,10 @@ import Pagination from '@mui/material/Pagination';
 function TicketList() {
   const [loading, setLoading] = useState(true);
   const [searchValue, setSearchValue] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [newTickets, setNewTickets] = useState([]); 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  const handleSearchChange = (value) => {
-    setSearchValue(value); 
-  }; 
-
-  const handlePageChange = (value) => {
-    setPage(value);
-  };
-
   const [filtersValue, setFiltersValue] = useState({
     allStatus:false,
     new:false,
@@ -36,28 +28,73 @@ function TicketList() {
     high:false
   }); 
 
-  const handleFilterChange = (newFilters) => {
-    console.log('Filters changed:', newFilters);
-    setFiltersValue(newFilters);
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchValue);
+    }, 500); 
+    return () => clearTimeout(timer);
+  }, [searchValue]);
 
   useEffect(() => {
     document.title = "adish HAP | My Tickets"
-    const fetchTickets = async () => {
-      try {
-        const response = await axiosInstance.get(`/user/tickets?page=${page}`);
-        const paginated = response.data.tickets;
-        setNewTickets(paginated.data || []); 
-        setTotalPages(paginated.last_page)
-      } catch (error) {
-        console.error('Error fetching tickets:', error);
-      } 
-      finally {
-        setLoading(false); 
-      }
-    };
     fetchTickets();
-  },[page]); 
+  }, [debouncedSearch, filtersValue, page]);
+
+  const fetchTickets = async () => {
+    try {
+      const statusIds = [];
+      if (filtersValue.new) statusIds.push(1);
+      if (filtersValue.inProgress) statusIds.push(2);
+      if (filtersValue.resolved) statusIds.push(3);
+      if (filtersValue.closed) statusIds.push(4);
+
+      const priorityIds = [];
+      if (filtersValue.low) priorityIds.push(1);
+      if (filtersValue.medium) priorityIds.push(2);
+      if (filtersValue.high) priorityIds.push(3);
+
+      const params = {
+        search: debouncedSearch,
+        status_ids: statusIds,
+        priority_ids: priorityIds,
+        all_status: filtersValue.allStatus,
+        all_priority: filtersValue.allPriority
+      }
+
+      console.log('Filters:', filtersValue);
+      console.log('Status IDs:', statusIds);
+      console.log('Priority IDs:', priorityIds);
+      console.log('Params being sent:', params); 
+    
+      const response = await axiosInstance.get(`/user/tickets?page=${page}`, {
+        params: params
+      });
+
+      const paginated = response.data.tickets;
+      
+      console.log('Response:', response.data); 
+      setNewTickets(paginated.data || []); 
+      setTotalPages(paginated.last_page)
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+    } 
+    finally {
+      setLoading(false); 
+    }
+  };
+
+  const handleSearchChange = (value) => {
+    setSearchValue(value); 
+  }; 
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFiltersValue(newFilters);
+  };
+
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
@@ -75,16 +112,13 @@ function TicketList() {
                   />
                 <Filter onFilterChange={handleFilterChange} />
                 {loading 
-                ? <Skeleton />
+                ? <Skeleton type="tickets"/>
                 : 
                 newTickets.length > 0 
                 ? (
                   <>
                     <TicketTable 
                       propTickets={newTickets}
-                      filtersValue={filtersValue} 
-                      searchValue={searchValue} 
-                      loading={loading}
                     />
                     <div className="flex justify-center mt-auto py-10">
                       <Pagination 
