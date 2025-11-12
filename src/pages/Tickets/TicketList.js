@@ -110,7 +110,7 @@ function TicketList() {
                   value={searchValue}
                   onChange={handleSearchChange}
                   />
-                <Filter onFilterChange={handleFilterChange} />
+                <Filter filtersValue={filtersValue} onFilterChange={handleFilterChange} />
                 {loading 
                 ? <Skeleton type="tickets"/>
                 : 

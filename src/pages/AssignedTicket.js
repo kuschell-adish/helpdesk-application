@@ -110,7 +110,7 @@ function AssignedTicket() {
                   value={searchValue}
                   onChange={handleSearchChange}
                   />
-                  <Filter onFilterChange={handleFilterChange} />
+                  <Filter filtersValue={filtersValue} onFilterChange={handleFilterChange} />
                   {loading 
                 ? <Skeleton />
                 : newTickets.length > 0 
