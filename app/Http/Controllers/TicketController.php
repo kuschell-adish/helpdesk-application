@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Priority;
-use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Models\History;
@@ -12,6 +11,7 @@ use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use App\Services\ImageUploadService;
 
@@ -24,17 +24,48 @@ class TicketController extends Controller
         $this->imageService = $imageService;
     }
 
-    public function index () {
-        $tickets = Ticket::with('department', 'user', 'priority', 'status', 'admin')
-        ->orderBy('id', 'desc')
-        ->get();
+    public function index (Request $request) {
+        $user = $request->user();
+        $userId = $user->id;
+        $userDeptId = $user->department_id;
+        $userRole = $user->role;
 
-        //get adish depts
-        $departments = Department::all();
+        $statusCounts = Ticket::select('status_id', DB::raw('count(*) as count'))
+                        ->where('user_id', $userId)
+                        ->groupBy('status_id')
+                        ->get();
+
+        $priorityCounts = Ticket::select('priority_id', DB::raw('count(*) as count'))
+                        ->where('user_id', $userId)
+                        ->groupBy('priority_id')
+                        ->get();
+
+        $userQuarterlyData = Ticket::selectRaw('EXTRACT (QUARTER from created_at) as quarter, count(*) as count')
+                        ->where('user_id', $userId)
+                        ->whereYear('created_at', now()->year)
+                        ->groupByRaw('EXTRACT (QUARTER from created_at)')
+                        ->get();
+
+        if($userRole === "admin"){
+            $comparisonQuarterlyData = Ticket::selectRaw('EXTRACT (QUARTER from created_at) as quarter, count(*) as count')
+            ->where('department_id', $userDeptId)
+            ->whereYear('created_at', date('Y'))
+            ->groupByRaw('EXTRACT (QUARTER from created_at)')
+            ->get();
+        }
+        else {
+            $comparisonQuarterlyData = Ticket::selectRaw('EXTRACT (QUARTER from created_at) as quarter, count(*) as count')
+            ->whereYear('created_at', date('Y'))
+            ->groupByRaw('EXTRACT (QUARTER from created_at)')
+            ->get();
+        }
 
         return response()->json([
-            'tickets' => $tickets,
-            'departments' => $departments]);
+            'statusCounts' => $statusCounts,
+            'priorityCounts' => $priorityCounts,
+            'userQuarterlyData' => $userQuarterlyData,
+            'comparisonQuarterlyData' => $comparisonQuarterlyData
+        ]);
     }
 
     public function userTickets (Request $request) {
